@@ -313,124 +313,126 @@ class _TravelPageState extends State<TravelPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.only(bottom: 50.0),
-        child: currentTour == null
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'No active tour.',
-                    style: TextStyle(
-                        fontSize: 24, color: Color.fromARGB(255, 0, 0, 0)),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () async {
-                      final response = await http.post(
-                        Uri.parse(tourCreateUrl),
-                        headers: {
-                          'Authorization': 'Token $token',
-                          'Content-Type': 'application/json',
-                        },
-                        body: jsonEncode({
-                          "source_lat": 28.176469,
-                          "source_lng": 83.008057,
-                          "destination_lat": 27.704060,
-                          "destination_lng": 85.102493
-                        }),
-                      );
-                      if (response.statusCode != 200) {
-                        print(response.body);
-                      }
-
-                      // Logic to create a new tour
-                      setState(() {
-                        final data = jsonDecode(response.body);
-                        currentTour = (data['tour_data']);
-                      });
-
-                      locationService(context);
-                    },
-                    child: const Text('Create New Tour'),
-                  ),
-                ],
-              )
-            : Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      'Current Tour: ${currentTour!['id']}',
-                      style: const TextStyle(
-                          fontSize: 24, color: Color.fromARGB(255, 0, 0, 0)),
-                    ),
-                  ),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: currentTour!['transactions'].length,
-                      itemBuilder: (context, index) {
-                        final transaction = currentTour!['transactions'][index];
-                        return ListTile(
-                            title: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Username: ${transaction['traveler_name']}',
-                                  style: const TextStyle(
-                                      fontSize: 16,
-                                      color: Color.fromARGB(255, 0, 0, 0)),
-                                ),
-                                Text(
-                                  'Price: ${transaction['amount']}',
-                                  style: const TextStyle(
-                                      fontSize: 16,
-                                      color: Color.fromARGB(255, 0, 0, 0)),
-                                ),
-                              ],
-                            ),
-                            trailing: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  transaction['status'],
-                                  style: TextStyle(
-                                    color: transaction['status'] == 'Success' ||
-                                            transaction['status'] == 'Completed'
-                                        ? Colors.green
-                                        : transaction['status'] == 'Pending'
-                                            ? Colors.orange
-                                            : Colors.red,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                if (transaction['status'] == 'Failed')
-                                  Text(
-                                    transaction['error'],
-                                    style: const TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 6,
-                                    ),
-                                  ),
-                              ],
-                            ));
-                      },
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: _endTour,
-                    child: const Text('End Tour'),
-                  ),
-                ],
+        backgroundColor: Colors.white,
+        body: Padding(
+          padding: const EdgeInsets.only(bottom: 50.0),
+          child: currentTour == null
+              ? Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'No active tour.',
+                style: TextStyle(
+                    fontSize: 24, color: Color.fromARGB(255, 0, 0, 0)),
               ),
-      ),
-      // Floating Action Button to add a new transaction
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  final response = await http.post(
+                    Uri.parse(tourCreateUrl),
+                    headers: {
+                      'Authorization': 'Token $token',
+                      'Content-Type': 'application/json',
+                    },
+                    body: jsonEncode({
+                      "source_lat": 28.176469,
+                      "source_lng": 83.008057,
+                      "destination_lat": 27.704060,
+                      "destination_lng": 85.102493
+                    }),
+                  );
+                  if (response.statusCode != 200) {
+                    print(response.body);
+                  }
+
+                  // Logic to create a new tour
+                  setState(() {
+                    final data = jsonDecode(response.body);
+                    currentTour = (data['tour_data']);
+                  });
+
+                  locationService(context);
+                },
+                child: const Text('Create New Tour'),
+              ),
+            ],
+          )
+              : Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'Current Tour: ${currentTour!['id']}',
+                  style: const TextStyle(
+                      fontSize: 24, color: Color.fromARGB(255, 0, 0, 0)),
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: currentTour!['transactions'].length,
+                  itemBuilder: (context, index) {
+                    final transaction = currentTour!['transactions'][index];
+                    return ListTile(
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Username: ${transaction['traveler_name']}',
+                              style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Color.fromARGB(255, 0, 0, 0)),
+                            ),
+                            Text(
+                              'Price: ${transaction['amount']}',
+                              style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Color.fromARGB(255, 0, 0, 0)),
+                            ),
+                          ],
+                        ),
+                        trailing: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              transaction['status'],
+                              style: TextStyle(
+                                color: transaction['status'] == 'Success' ||
+                                    transaction['status'] == 'Completed'
+                                    ? Colors.green
+                                    : transaction['status'] == 'Pending'
+                                    ? Colors.orange
+                                    : Colors.red,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            if (transaction['status'] == 'Failed')
+                              Text(
+                                transaction['error'],
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 6,
+                                ),
+                              ),
+                          ],
+                        ));
+                  },
+                ),
+              ),
+              ElevatedButton(
+                onPressed: _endTour,
+                child: const Text('End Tour'),
+              ),
+            ],
+          ),
+        ),
+        //Floating Action Button to add a new transaction
       floatingActionButton: currentTour == null
           ? null
-          : FloatingActionButton(
-              onPressed: () {
+        : Padding(
+    padding: const EdgeInsets.only(bottom: 20.0), // Adjust padding as needed
+    child: FloatingActionButton(
+    onPressed: () {
                 // Open QR code scanner when clicked
                 showDialog(
                   context: context,
