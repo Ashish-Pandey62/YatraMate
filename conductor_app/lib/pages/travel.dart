@@ -314,7 +314,8 @@ class _TravelPageState extends State<TravelPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.only(bottom: 50.0),
         child: currentTour == null
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -421,7 +422,7 @@ class _TravelPageState extends State<TravelPage> {
                   ElevatedButton(
                     onPressed: _endTour,
                     child: const Text('End Tour'),
-                  ),   
+                  ),
                 ],
               ),
       ),
