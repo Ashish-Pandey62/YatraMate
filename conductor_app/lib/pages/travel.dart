@@ -334,10 +334,10 @@ class _TravelPageState extends State<TravelPage> {
                           'Content-Type': 'application/json',
                         },
                         body: jsonEncode({
-                          "source_lat": 28.176469,
-                          "source_lng": 83.008057,
-                          "destination_lat": 27.704060,
-                          "destination_lng": 85.102493
+                          "source_lat": 28.2096, // Pokhara latitude
+                          "source_lng": 83.9850, // Pokhara longitude
+                          "destination_lat": 27.7172, // Kathmandu latitude
+                          "destination_lng": 85.3240 // Kathmandu longitude
                         }),
                       );
                       if (response.statusCode != 200) {
