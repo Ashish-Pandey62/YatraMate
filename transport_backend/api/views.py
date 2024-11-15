@@ -361,3 +361,37 @@ def get_tour_coordinates(request, tour_id):
             "status": "failed",
             "message": str(e)
         }, status=500)
+        
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def set_tour_coordinates(request, tour_id):
+    try:
+        user = request.user
+
+        if user.user_type != 'conductor':
+            return Response({"status": "failed", "message": "Only conductors can update coordinates"}, status=status.HTTP_403_FORBIDDEN)
+        
+        tour = Tour.objects.filter(id=tour_id, conductor=user).first()
+        
+        if not tour:
+            return Response({"status": "failed", "message": "Tour not found or user does not have permission to modify this tour"}, status=status.HTTP_404_NOT_FOUND)
+
+        source_lat = request.data.get('source_lat')
+        source_lng = request.data.get('source_lng')
+        destination_lat = request.data.get('destination_lat')
+        destination_lng = request.data.get('destination_lng')
+
+        if source_lat is None or source_lng is None or destination_lat is None or destination_lng is None:
+            return Response({"status": "failed", "message": "All coordinates (source and destination) are required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        tour.source_lat = source_lat
+        tour.source_lng = source_lng
+        tour.destination_lat = destination_lat
+        tour.destination_lng = destination_lng
+        tour.save()
+
+        return Response({"status": "success", "message": "Coordinates updated successfully"}, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"status": "failed", "message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
