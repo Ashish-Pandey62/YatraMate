@@ -131,7 +131,7 @@ class _LoginPageState extends State<LoginPage> {
                   const Text(
                     'Welcome back',
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: 25,
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
                     ),
@@ -154,7 +154,7 @@ class _LoginPageState extends State<LoginPage> {
                     decoration: InputDecoration(
                       hintText: 'Enter User Name',
                       labelText: 'User Name',
-                      labelStyle: const TextStyle(
+                      labelStyle: TextStyle(
                         color: Colors.black,
                         fontSize: 16,
                       ),
