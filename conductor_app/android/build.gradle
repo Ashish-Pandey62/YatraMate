@@ -1,3 +1,17 @@
+buildscript {
+    ext.kotlin_version = '1.9.10' // Use 1.9.x for Gradle 7.6.3 compatibility
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.android.tools.build:gradle:7.4.2' // Compatible with Gradle 7.6.3
+        // Uncomment if needed for Firebase/Google Services
+        // classpath 'com.google.gms:google-services:4.3.14'
+    }
+}
+
 allprojects {
     repositories {
         google()
@@ -5,12 +19,9 @@ allprojects {
     }
 }
 
-rootProject.buildDir = "../build"
+rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
-}
-subprojects {
-    project.evaluationDependsOn(":app")
 }
 
 tasks.register("clean", Delete) {
