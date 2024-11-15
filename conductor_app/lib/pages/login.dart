@@ -17,6 +17,7 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
 
   bool _isLoading = false;
+   bool _obscurePassword = true; // State variable to toggle password visibility
 
   Future<void> _logout() async {
     final prefs = await SharedPreferences.getInstance();
@@ -168,7 +169,7 @@ class _LoginPageState extends State<LoginPage> {
                   // Password text field
                   TextField(
                     controller: _passwordController,
-                    obscureText: true,
+                    obscureText: _obscurePassword, // Use the state variable
                     decoration: InputDecoration(
                       hintText: 'Enter Password',
                       labelText: 'Password',
@@ -179,6 +180,16 @@ class _LoginPageState extends State<LoginPage> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
+                       suffixIcon: IconButton(
+          icon: Icon(
+            _obscurePassword ? Icons.visibility_off : Icons.visibility,
+          ),
+          onPressed: () {
+            setState(() {
+              _obscurePassword = !_obscurePassword;
+            });
+          },
+                       ),
                     ),
                   ),
                   const SizedBox(height: 18),
@@ -203,7 +214,6 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                   const SizedBox(height: 10),
-
                   // Conditionally hide "Not Registered" or "Register Now" when keyboard is visible
                   if (!isKeyboardVisible)
                     Column(
