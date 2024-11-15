@@ -12,7 +12,7 @@ urlpatterns = [
     path('end-tour/', views.end_tour, name='end_tour'),  
     path('update-location/', views.update_tour_location, name='update_location'),
     path('all-active-tour/', views.get_all_active_tours, name='active_tour'),
-    path('tour/<int:tour_id>/source-destination/', views.get_tour_source_destination, name='tour-source-destination'),
+    path('tour/<int:tour_id>/source-destination-coords/', views.get_tour_coordinates, name='tour-source-destination_coords'),
 
 ]
 

@@ -332,16 +332,23 @@ def get_all_active_tours(request):
     except Exception as e:
         return Response({"status": "failed", "message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_tour_source_destination(request, tour_id):
+def get_tour_coordinates(request, tour_id):
     try:
+        # Get the tour by ID, ensuring it exists
         tour = Tour.objects.get(id=tour_id)
 
+        # Return the source and destination coordinates
         return Response({
-            "source": tour.source,
-            "destination": tour.destination
+            "source": {
+                "latitude": tour.source_lat,
+                "longitude": tour.source_lng
+            },
+            "destination": {
+                "latitude": tour.destination_lat,
+                "longitude": tour.destination_lng
+            }
         }, status=200)
         
     except Tour.DoesNotExist:
