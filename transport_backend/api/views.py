@@ -156,7 +156,6 @@ def activate_tour(request):
         if request.user.user_type != 'conductor':
             return Response({"status": "failed", "message": "Only conductors can activate a tour"}, status=status.HTTP_403_FORBIDDEN)
         
-        # Check if the conductor already has an active tour
         active_user_tour = Tour.objects.filter(conductor=request.user, is_active=True)
         if active_user_tour.exists():
             return Response({
@@ -164,13 +163,11 @@ def activate_tour(request):
                 "message": "User already has an active tour"
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        # Get source and destination from the request data
         source = request.data.get("source")
         destination = request.data.get("destination")
         if not source or not destination:
             return Response({"status": "failed", "message": "Source and destination are required"}, status=status.HTTP_400_BAD_REQUEST)
         
-        # Create the tour with provided source and destination
         tour = Tour.objects.create(
             is_active=True,
             latitude=10.0,
@@ -333,5 +330,27 @@ def get_all_active_tours(request):
         return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
     
     except Exception as e:
-        # Handle any unexpected errors and return a failed response
         return Response({"status": "failed", "message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_tour_source_destination(request, tour_id):
+    try:
+        tour = Tour.objects.get(id=tour_id)
+
+        return Response({
+            "source": tour.source,
+            "destination": tour.destination
+        }, status=200)
+        
+    except Tour.DoesNotExist:
+        return Response({
+            "status": "failed",
+            "message": "Tour not found."
+        }, status=404)
+    except Exception as e:
+        return Response({
+            "status": "failed",
+            "message": str(e)
+        }, status=500)
