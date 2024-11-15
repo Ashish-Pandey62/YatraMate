@@ -163,26 +163,30 @@ def activate_tour(request):
                 "message": "User already has an active tour"
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        source = request.data.get("source")
-        destination = request.data.get("destination")
-        if not source or not destination:
-            return Response({"status": "failed", "message": "Source and destination are required"}, status=status.HTTP_400_BAD_REQUEST)
+        source_lat = request.data.get("source_lat")
+        source_lng = request.data.get("source_lng")
+        destination_lat = request.data.get("destination_lat")
+        destination_lng = request.data.get("destination_lng")
+        # if not source or not destination:
+        #     return Response({"status": "failed", "message": "Source and destination are required"}, status=status.HTTP_400_BAD_REQUEST)
         
         tour = Tour.objects.create(
             is_active=True,
             latitude=10.0,
             longitude=10.0,
             conductor=request.user,
-            source=source,
-            destination=destination
+            source_lat=source_lat,
+            source_lng=source_lng,
+            destination_lat=destination_lat,
+            destination_lng=destination_lng
         )
         
-        # Fetch associated transactions (if any)
         transactions = Transaction.objects.filter(tour=tour)
         
-        # Serialize tour and transactions data
         tour_serializer = TourSerializer(tour)
         transaction_serializer = TransactionSerializer(transactions, many=True)
+        
+        print("Hit hit hit")
         
         return Response({
             "message": "Tour activated successfully",
