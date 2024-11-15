@@ -101,7 +101,7 @@ FocusScope.of(context).unfocus();
 final price = double.tryParse(_priceController.text) ?? 0;
 
 if (price <= 0) {
-  
+  FocusScope.of(context).unfocus();
   // If price is invalid, reset the QR data and display the error message
     setState(() {
       _isInvalidPrice = true;
