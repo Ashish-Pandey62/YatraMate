@@ -231,31 +231,67 @@ if (price <= 0) {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          children: [
-            const Text(
-              "Caution : Don't generate multiple QR codes.",
-              style: TextStyle(color: Colors.red, fontStyle: FontStyle.italic),
-              textAlign: TextAlign.left,
+  children: [
+    // Main outer box
+    Container(
+      margin: const EdgeInsets.all(10.0), // Adds margin around the main box
+      padding: const EdgeInsets.all(12.0), // Adds padding inside the main box
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade300,
+            blurRadius: 6.0,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start, // Align content to start
+        children: [
+          // Label or additional content can go here if needed
+          const Text(
+            'Enter Price',
+            style: TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
             ),
-            TextField(
+          ),
+          const SizedBox(height: 10),
+
+          // Sub-box for price entry
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0), // Reduced padding
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100, // Slight grey background
+              borderRadius: BorderRadius.circular(8.0),
+              border: Border.all(color: Colors.grey.shade300), // Border for the sub-box
+            ),
+            child: TextField(
               controller: _priceController,
               decoration: const InputDecoration(
-                labelText: 'Enter Price',
                 labelStyle: TextStyle(
-                    fontSize: 22.0,
-                    fontWeight: FontWeight
-                        .bold), // Increased font size and made it bold
+                  fontSize: 22.0,
+                  fontWeight: FontWeight.bold,
+                ),
                 hintText: 'Enter the price to generate QR code',
                 hintStyle: TextStyle(
-                    fontSize: 15.0,
-                    fontStyle: FontStyle.italic,
-                    color: Color.fromARGB(
-                        255, 158, 158, 158)), // Increased font size
+                  fontSize: 15.0,
+                  fontStyle: FontStyle.italic,
+                  color: Color.fromARGB(255, 158, 158, 158),
+                ),
+                border: InputBorder.none, // No default border
               ),
               keyboardType: TextInputType.number,
-              style: const TextStyle(fontSize: 25.0), // Increased font size
+              style: const TextStyle(fontSize: 10.0), // Larger text style
             ),
-            const SizedBox(height: 20),
+          ),
+        ],
+      ),
+    ),
+     const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 clicked ? _showConfirmationDialog(context) : _generateQR();
@@ -271,8 +307,8 @@ if (price <= 0) {
                     embeddedImage: _textAsImageProvider,
                   )
                 : Container(),
-          ],
-        ),
+  ],
+),
       ),
     );
   }

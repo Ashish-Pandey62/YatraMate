@@ -315,7 +315,8 @@ class _TravelPageState extends State<TravelPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.only(bottom: 50.0),
         child: currentTour == null
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -335,10 +336,15 @@ class _TravelPageState extends State<TravelPage> {
                           'Content-Type': 'application/json',
                         },
                         body: jsonEncode({
-                          'latitude': '10.000000',
-                          'longitude': '20.000000',
+                          "source_lat": 28.176469,
+                          "source_lng": 83.008057,
+                          "destination_lat": 27.704060,
+                          "destination_lng": 85.102493
                         }),
                       );
+                      if (response.statusCode != 200) {
+                        print(response.body);
+                      }
 
                       // Logic to create a new tour
                       setState(() {

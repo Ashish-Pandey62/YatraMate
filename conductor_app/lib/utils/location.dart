@@ -140,7 +140,7 @@ void stopBackgroundService() {
 
 @pragma('vm:entry-point')
 void onStart(ServiceInstance service) async {
-  String baseUrl = "https://anuja.anuj-paudel.com.np/";
+  String baseUrl = "http://192.168.75.211:8000";
   String updateLocationUrl = '$baseUrl/api/update-location/';
   final prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('auth_token');
