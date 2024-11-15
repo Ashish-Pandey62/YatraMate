@@ -275,6 +275,7 @@ class _TravelPageState extends State<TravelPage> {
             final username = decodedToken['sub'] as String;
             final price =
                 double.tryParse(decodedToken['price'].toString()) ?? 0;
+
             final iat = int.tryParse(decodedToken['iat'].toString()) ?? 0;
             final exp = int.tryParse(decodedToken['exp'].toString()) ?? 0;
 
@@ -331,7 +332,8 @@ class _TravelPageState extends State<TravelPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.only(bottom: 50.0),
         child: currentTour == null
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,

@@ -94,8 +94,47 @@ class _PaymentPageState extends State<PaymentPage> {
       _isLoading = false;
     });
   }
-
+bool _isInvalidPrice = false;  // New flag to track if the price is invalid
   void _generateQR() async {
+FocusScope.of(context).unfocus();
+    // Validate price before generating QR
+final price = double.tryParse(_priceController.text) ?? 0;
+
+if (price <= 0) {
+  
+  // If price is invalid, reset the QR data and display the error message
+    setState(() {
+      _isInvalidPrice = true;
+      _qrData = "";  // Clear any previously generated QR code
+      _textAsImageProvider = null; // Clear previously generated QR image if any
+    });
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Row(
+        children: [
+          const Icon(Icons.sentiment_dissatisfied, color: Colors.red),
+          const SizedBox(width: 10), // Adds spacing between icon and text
+          Expanded(
+            child: const Text(
+              'Invalid price. Please enter a value greater than 0.',
+              style: TextStyle(fontSize: 16), // Optional: Adjust font size
+            ),
+          ),
+        ],
+      ),
+      backgroundColor: Colors.black87,
+      behavior: SnackBarBehavior.floating, // Makes it look like a floating bar
+      duration: const Duration(seconds: 3), // Display duration
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12), // Rounded corners
+      ),
+    ),
+  );
+  return;
+}
+
+    
     ImageProvider gg = await _generateTextImage(_priceController.text);
     setState(() {
       // Get the current date (used as the 'issued at' and 'expiration' date)
@@ -120,6 +159,8 @@ class _PaymentPageState extends State<PaymentPage> {
       _qrData = token.toString();
       _textAsImageProvider = gg;
     });
+    // Ensure keyboard stays hidden after QR generation
+  FocusScope.of(context).unfocus();
   }
 
   Future<ImageProvider> _generateTextImage(String text) async {
@@ -222,7 +263,7 @@ class _PaymentPageState extends State<PaymentPage> {
 
           // Sub-box for price entry
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0), // Reduced padding
+            padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0), // Reduced padding
             decoration: BoxDecoration(
               color: Colors.grey.shade100, // Slight grey background
               borderRadius: BorderRadius.circular(8.0),
@@ -244,7 +285,7 @@ class _PaymentPageState extends State<PaymentPage> {
                 border: InputBorder.none, // No default border
               ),
               keyboardType: TextInputType.number,
-              style: const TextStyle(fontSize: 10.0), // Larger text style
+              style: const TextStyle(fontSize: 15.0), // Larger text style
             ),
           ),
         ],
