@@ -258,6 +258,7 @@ class _TravelPageState extends State<TravelPage> {
             final username = decodedToken['sub'] as String;
             final price =
                 double.tryParse(decodedToken['price'].toString()) ?? 0;
+
             final iat = int.tryParse(decodedToken['iat'].toString()) ?? 0;
             final exp = int.tryParse(decodedToken['exp'].toString()) ?? 0;
 
