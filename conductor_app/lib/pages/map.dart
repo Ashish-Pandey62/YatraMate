@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -22,20 +21,44 @@ class _MapPageState extends State<MapPage>
     with AutomaticKeepAliveClientMixin<MapPage> {
   @override
   bool get wantKeepAlive => true; // Keeps the state alive
-  //initialize variable to store tours containing bus lat long heading speed
+
   List<dynamic>? tours;
-  // Define latitude and longitude variables
   double latitude = 0.0;
   double longitude = 0.0;
+
+  // Kathmandu coordinates
+  double sourceLatitude = 27.7172;
+  double sourceLongitude = 85.3240;
+
+// Bharatpur coordinates
+  double destinationLatitude = 27.6766;
+  double destinationLongitude = 84.4322;
+
   bool _locationFetched = false;
   double scale = 1.0;
   MapController mapController = MapController();
 
+  //all urls
+  final String baseUrl = dotenv.env['SITE_URL'] ?? '';
+  String? tourSD;
+  String? token;
+
+  // Track the active bus for route display
+  int? activeBusIndex;
+  List<LatLng> routePoints = [];
+
   @override
   void initState() {
     super.initState();
+    _initializeVariale();
     _updateBusPosition();
     _getCurrentLocation();
+  }
+
+  void _initializeVariale() async {
+    tourSD = '$baseUrl/api/all-active-tour/';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    token = prefs.getString('auth_token');
   }
 
   void _getCurrentLocation() async {
@@ -49,7 +72,6 @@ class _MapPageState extends State<MapPage>
       if (event is MapEventScrollWheelZoom ||
           event is MapEventScrollWheelZoom ||
           event is MapEventRotate) {
-        // print('Zoom: ${mapController.camera.zoom}');
         setState(() {
           scale = 1 * mapController.camera.zoom * 0.15;
         });
@@ -57,13 +79,33 @@ class _MapPageState extends State<MapPage>
     });
   }
 
-  void _updateBusPosition() async {
-    final String baseUrl = dotenv.env['SITE_URL'] ?? '';
-    final String toursURL = '$baseUrl/api/all-active-tour/';
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('auth_token');
+  Future<void> fetchRoute(LatLng source, LatLng destination) async {
+    final apiKey =
+        '5b3ce3597851110001cf6248966817b9279641689b1420ce56329a55'; // Replace with your API key
+    final url =
+        'https://api.openrouteservice.org/v2/directions/driving-car?api_key=$apiKey&start=${source.longitude},${source.latitude}&end=${destination.longitude},${destination.latitude}';
 
-    // First time request to server
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final List coordinates = data['features'][0]['geometry']['coordinates'];
+
+        setState(() {
+          routePoints =
+              coordinates.map((coord) => LatLng(coord[1], coord[0])).toList();
+        });
+      } else {
+        print('Failed to fetch route: ${response.body}');
+      }
+    } catch (e) {
+      print('Error fetching route: $e');
+    }
+  }
+
+  void _updateBusPosition() async {
+    final String toursURL = '$baseUrl/api/all-active-tour/';
+
     final response = await http.get(Uri.parse(toursURL), headers: {
       'Authorization': 'Token $token',
     });
@@ -76,7 +118,6 @@ class _MapPageState extends State<MapPage>
       print('Failed to load tours');
     }
 
-    // Every 10 seconds make request to server
     Timer.periodic(const Duration(seconds: 3), (timer) async {
       if (!mounted) {
         timer.cancel();
@@ -88,7 +129,6 @@ class _MapPageState extends State<MapPage>
       });
 
       if (response.statusCode == 200) {
-        // print(tours);
         setState(() {
           tours = jsonDecode(response.body)['data'];
         });
@@ -96,6 +136,34 @@ class _MapPageState extends State<MapPage>
         print('Failed to load tours');
       }
     });
+  }
+
+  void _onBusClicked(int index, LatLng busPosition, int id=1) async {
+    if (index == activeBusIndex) {
+      // If the same bus is clicked, deactivate the route
+      setState(() {
+        activeBusIndex = null;
+        routePoints = [];
+      });
+    } else {
+      // If a different bus is clicked, fetch the route
+      setState(() {
+        activeBusIndex = index;
+      });
+      // Use your desired destination here
+      final response = await http.get(Uri.parse(tourSD.toString()), headers: {
+        'Authorization': 'Token $token',
+      });
+
+      final responseData = json.decode(response.body);
+      print(responseData);
+      LatLng source = LatLng(double.parse(responseData['source']['latitude']),
+          double.parse(responseData['source']['longitude']));
+      LatLng destination = LatLng(
+          double.parse(responseData['destination']['latitude']),
+          double.parse(responseData['destination']['longitude']));
+      fetchRoute(source, destination);
+    }
   }
 
   @override
@@ -117,58 +185,45 @@ class _MapPageState extends State<MapPage>
                   userAgentPackageName: 'com.example.app',
                 ),
                 MarkerLayer(markers: [
-                  for (var tour in tours ?? [])
+                  for (int i = 0; i < (tours?.length ?? 0); i++)
                     Marker(
-                        point: LatLng(
-                            double.parse(tour['latitude']) +
-                                Random().nextDouble() * 0,
-                            double.parse(tour['longitude']) +
-                                Random().nextDouble() * 0),
+                      point: LatLng(
+                        double.parse(tours![i]['latitude']),
+                        double.parse(tours![i]['longitude']),
+                      ),
+                      child: GestureDetector(
+                        onTap: () => {
+                          _onBusClicked(
+                            i,
+                            LatLng(
+                              double.parse(tours![i]['latitude']),
+                              double.parse(tours![i]['longitude']),
+                            ),
+                            // (json.decode(tours![i]))['id'],
+                          )
+                        },
                         child: Transform.scale(
                           scale: scale,
                           child: Transform.rotate(
-                              angle: double.parse(tour['heading']),
-                              child:
-                                  Image(image: AssetImage('./assets/bus.png'))),
-                        )),
+                            angle: double.parse(tours![i]['heading']),
+                            child: Image(
+                              image: AssetImage('./assets/bus.png'),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                 ]),
-
-                // MarkerLayer(
-                //   markers: [
-                //     for (var tour in tours ?? [])
-                //       Marker(
-                //         point: LatLng(
-                //           double.parse(tour['latitude']),
-                //           double.parse(tour['longitude']) + 0.005,
-                //         ),
-                //         child: Transform.scale(
-                //           scale: 1,
-                //           child: Container(
-                //             padding: EdgeInsets.symmetric(
-                //                 horizontal: 4.0), // Optional padding
-                //             decoration: BoxDecoration(
-                //               borderRadius: BorderRadius.circular(4.0),
-                //             ),
-                //             child: FittedBox(
-                //                 fit: BoxFit
-                //                     .contain, // Ensures text scales to fit within the box
-                //                 child: Transform.rotate(
-                //                   angle: double.parse(tour['heading']),
-                //                   child: Text(
-                //                     tour['conductor_name'].split(' ')[0],
-                //                     style: TextStyle(
-                //                       color: const Color.fromARGB(
-                //                           255, 255, 255, 255),
-                //                       fontSize: 60,
-                //                       fontWeight: FontWeight.bold,
-                //                     ),
-                //                   ),
-                //                 )),
-                //           ),
-                //         ),
-                //       ),
-                //   ],
-                // )
+                if (routePoints.isNotEmpty)
+                  PolylineLayer(
+                    polylines: [
+                      Polyline(
+                        points: routePoints,
+                        strokeWidth: 4.0,
+                        color: Colors.blue,
+                      ),
+                    ],
+                  ),
               ],
             )
           else
