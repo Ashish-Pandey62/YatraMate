@@ -149,34 +149,50 @@ def validate_qr_code(request):
 
 
 #  activating the tour
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])  
 def activate_tour(request):
     try:
         if request.user.user_type != 'conductor':
             return Response({"status": "failed", "message": "Only conductors can activate a tour"}, status=status.HTTP_403_FORBIDDEN)
-        active_user_tour = Tour.objects.filter(conductor=request.user,is_active=True)
         
+        # Check if the conductor already has an active tour
+        active_user_tour = Tour.objects.filter(conductor=request.user, is_active=True)
         if active_user_tour.exists():
             return Response({
-            "status": "failed",
-            "message": "User already has an active tour"
+                "status": "failed",
+                "message": "User already has an active tour"
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        tour = Tour.objects.create(is_active=True, latitude=10.0, longitude=10.0, conductor=request.user) 
+        # Get source and destination from the request data
+        source = request.data.get("source")
+        destination = request.data.get("destination")
+        if not source or not destination:
+            return Response({"status": "failed", "message": "Source and destination are required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Create the tour with provided source and destination
+        tour = Tour.objects.create(
+            is_active=True,
+            latitude=10.0,
+            longitude=10.0,
+            conductor=request.user,
+            source=source,
+            destination=destination
+        )
+        
+        # Fetch associated transactions (if any)
         transactions = Transaction.objects.filter(tour=tour)
         
+        # Serialize tour and transactions data
         tour_serializer = TourSerializer(tour)
         transaction_serializer = TransactionSerializer(transactions, many=True)
         
-
         return Response({
             "message": "Tour activated successfully",
-           "tour_data": {
-                    **tour_serializer.data,
-                    "transactions": transaction_serializer.data  
-                }  
+            "tour_data": {
+                **tour_serializer.data,
+                "transactions": transaction_serializer.data  
+            }  
         }, status=status.HTTP_201_CREATED)
     
     except Exception as e:
@@ -184,7 +200,8 @@ def activate_tour(request):
             "status": "failed",
             "message": str(e)
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

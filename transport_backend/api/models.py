@@ -53,6 +53,8 @@ class Tour(models.Model):
     longitude = models.DecimalField(max_digits=9, decimal_places=6, default=27)
     heading = models.DecimalField(max_digits=9, decimal_places=6, default=0.0)
     speed = models.DecimalField(max_digits=9, decimal_places=6, default=0.0)
+    source = models.CharField(max_length=255, null=False, blank=False)
+    destination = models.CharField(max_length=255, null=False, blank=False)
 
     conductor = models.ForeignKey(
         CustomUser,

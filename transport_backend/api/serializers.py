@@ -59,7 +59,7 @@ class TourSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tour
-        fields = ['id', 'is_active', 'latitude', 'longitude', 'heading', 'speed', 'conductor_name']
+        fields = ['id', 'is_active','latitude', 'longitude', 'heading', 'speed', 'conductor_name','source','destination',]
 
 # Load the public key from PEM format
 def load_public_key(pem_data):
