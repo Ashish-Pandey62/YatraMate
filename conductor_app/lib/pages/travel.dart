@@ -416,7 +416,7 @@ class _TravelPageState extends State<TravelPage> {
                   ElevatedButton(
                     onPressed: _endTour,
                     child: const Text('End Tour'),
-                  ),
+                  ),   
                 ],
               ),
       ),
