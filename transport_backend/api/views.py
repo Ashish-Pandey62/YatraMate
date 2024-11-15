@@ -163,26 +163,30 @@ def activate_tour(request):
                 "message": "User already has an active tour"
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        source = request.data.get("source")
-        destination = request.data.get("destination")
-        if not source or not destination:
-            return Response({"status": "failed", "message": "Source and destination are required"}, status=status.HTTP_400_BAD_REQUEST)
+        source_lat = request.data.get("source_lat")
+        source_lng = request.data.get("source_lng")
+        destination_lat = request.data.get("destination_lat")
+        destination_lng = request.data.get("destination_lng")
+        # if not source or not destination:
+        #     return Response({"status": "failed", "message": "Source and destination are required"}, status=status.HTTP_400_BAD_REQUEST)
         
         tour = Tour.objects.create(
             is_active=True,
             latitude=10.0,
             longitude=10.0,
             conductor=request.user,
-            source=source,
-            destination=destination
+            source_lat=source_lat,
+            source_lng=source_lng,
+            destination_lat=destination_lat,
+            destination_lng=destination_lng
         )
         
-        # Fetch associated transactions (if any)
         transactions = Transaction.objects.filter(tour=tour)
         
-        # Serialize tour and transactions data
         tour_serializer = TourSerializer(tour)
         transaction_serializer = TransactionSerializer(transactions, many=True)
+        
+        print("Hit hit hit")
         
         return Response({
             "message": "Tour activated successfully",
@@ -332,16 +336,23 @@ def get_all_active_tours(request):
     except Exception as e:
         return Response({"status": "failed", "message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_tour_source_destination(request, tour_id):
+def get_tour_coordinates(request, tour_id):
     try:
+        # Get the tour by ID, ensuring it exists
         tour = Tour.objects.get(id=tour_id)
 
+        # Return the source and destination coordinates
         return Response({
-            "source": tour.source,
-            "destination": tour.destination
+            "source": {
+                "latitude": tour.source_lat,
+                "longitude": tour.source_lng
+            },
+            "destination": {
+                "latitude": tour.destination_lat,
+                "longitude": tour.destination_lng
+            }
         }, status=200)
         
     except Tour.DoesNotExist:
@@ -354,3 +365,37 @@ def get_tour_source_destination(request, tour_id):
             "status": "failed",
             "message": str(e)
         }, status=500)
+        
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def set_tour_coordinates(request, tour_id):
+    try:
+        user = request.user
+
+        if user.user_type != 'conductor':
+            return Response({"status": "failed", "message": "Only conductors can update coordinates"}, status=status.HTTP_403_FORBIDDEN)
+        
+        tour = Tour.objects.filter(id=tour_id, conductor=user).first()
+        
+        if not tour:
+            return Response({"status": "failed", "message": "Tour not found or user does not have permission to modify this tour"}, status=status.HTTP_404_NOT_FOUND)
+
+        source_lat = request.data.get('source_lat')
+        source_lng = request.data.get('source_lng')
+        destination_lat = request.data.get('destination_lat')
+        destination_lng = request.data.get('destination_lng')
+
+        if source_lat is None or source_lng is None or destination_lat is None or destination_lng is None:
+            return Response({"status": "failed", "message": "All coordinates (source and destination) are required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        tour.source_lat = source_lat
+        tour.source_lng = source_lng
+        tour.destination_lat = destination_lat
+        tour.destination_lng = destination_lng
+        tour.save()
+
+        return Response({"status": "success", "message": "Coordinates updated successfully"}, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"status": "failed", "message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
