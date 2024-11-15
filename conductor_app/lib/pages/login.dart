@@ -100,7 +100,6 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     // Check if the keyboard is visible
@@ -210,7 +209,6 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         TextButton(
                           onPressed: () {
-
                             Navigator.pushNamed(context, '/signup');
                           },
                           child: const Text(
