@@ -34,6 +34,23 @@ class _TravelPageState extends State<TravelPage> {
   late String? token;
   late String? userType;
   late String activeTourUrl;
+  TextEditingController sourceController = TextEditingController();
+  TextEditingController destinationController = TextEditingController();
+
+  Future<Map<String, dynamic>> fetchLocationData(String query) async {
+    final apiKey =
+        '5b3ce3597851110001cf6248966817b9279641689b1420ce56329a55'; // Replace with your API key
+    final url = Uri.parse(
+        'https://api.openrouteservice.org/geocode/search?api_key=$apiKey&text=$query');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return data;
+    } else {
+      throw Exception('Failed to load location data');
+    }
+  }
 
   //remove battery optimization
   final _flutterIgnorebatteryoptimizationPlugin =
@@ -324,9 +341,28 @@ class _TravelPageState extends State<TravelPage> {
                     style: TextStyle(
                         fontSize: 24, color: Color.fromARGB(255, 0, 0, 0)),
                   ),
+                  TextField(
+                    controller: sourceController,
+                    decoration: InputDecoration(labelText: 'Source'),
+                  ),
+                  TextField(
+                    controller: destinationController,
+                    decoration: InputDecoration(labelText: 'Destination'),
+                  ),
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () async {
+                      final sourceData =
+                          await fetchLocationData(sourceController.text);
+                      final destinationData =
+                          await fetchLocationData(destinationController.text);
+
+                      // Extracting coordinates (or use other data based on your needs)
+                      final sourceCoordinates =
+                          sourceData['features'][0]['geometry']['coordinates'];
+                      final destinationCoordinates = destinationData['features']
+                          [0]['geometry']['coordinates'];
+                      // print(destinationCoordinates);
                       final response = await http.post(
                         Uri.parse(tourCreateUrl),
                         headers: {
@@ -334,10 +370,14 @@ class _TravelPageState extends State<TravelPage> {
                           'Content-Type': 'application/json',
                         },
                         body: jsonEncode({
-                          "source_lat": 28.2096, // Pokhara latitude
-                          "source_lng": 83.9850, // Pokhara longitude
-                          "destination_lat": 27.7172, // Kathmandu latitude
-                          "destination_lng": 85.3240 // Kathmandu longitude
+                          "source_lat":
+                              sourceCoordinates[1], // Pokhara latitude
+                          "source_lng":
+                              sourceCoordinates[0], // Pokhara longitude
+                          "destination_lat":
+                              destinationCoordinates[1], // Kathmandu latitude
+                          "destination_lng":
+                              destinationCoordinates[0] // Kathmandu longitude
                         }),
                       );
                       if (response.statusCode != 200) {
