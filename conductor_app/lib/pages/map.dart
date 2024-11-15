@@ -138,7 +138,7 @@ class _MapPageState extends State<MapPage>
     });
   }
 
-  void _onBusClicked(int index, LatLng busPosition, int id=1) async {
+  void _onBusClicked(int index, LatLng busPosition, int id) async {
     if (index == activeBusIndex) {
       // If the same bus is clicked, deactivate the route
       setState(() {
@@ -157,6 +157,7 @@ class _MapPageState extends State<MapPage>
 
       final responseData = json.decode(response.body);
       print(responseData);
+      print("hahaha");
       LatLng source = LatLng(double.parse(responseData['source']['latitude']),
           double.parse(responseData['source']['longitude']));
       LatLng destination = LatLng(
@@ -194,13 +195,12 @@ class _MapPageState extends State<MapPage>
                       child: GestureDetector(
                         onTap: () => {
                           _onBusClicked(
-                            i,
-                            LatLng(
-                              double.parse(tours![i]['latitude']),
-                              double.parse(tours![i]['longitude']),
-                            ),
-                            // (json.decode(tours![i]))['id'],
-                          )
+                              i,
+                              LatLng(
+                                double.parse(tours![i]['latitude']),
+                                double.parse(tours![i]['longitude']),
+                              ),
+                              tours![i]['id'])
                         },
                         child: Transform.scale(
                           scale: scale,
