@@ -232,6 +232,11 @@ if (price <= 0) {
         padding: const EdgeInsets.all(16.0),
         child: Column(
   children: [
+     const Text(
+              "Caution : Don't generate multiple QR codes.",
+              style: TextStyle(color: Colors.red, fontStyle: FontStyle.italic),
+              textAlign: TextAlign.left,
+            ),
     // Main outer box
     Container(
       margin: const EdgeInsets.all(10.0), // Adds margin around the main box
