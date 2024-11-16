@@ -18,7 +18,7 @@ class _SignupPageState extends State<SignupPage> {
   final _passwordController = TextEditingController();
   final _password2Controller = TextEditingController();
   final _nameController = TextEditingController();
-  
+
   bool _isLoading = false;
   String _selectedUserType = 'traveler';
 
@@ -171,7 +171,7 @@ Widget build(BuildContext context) {
           const SizedBox(height: 10),
           TextField(
             controller: _emailController,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Email',
               border: const OutlineInputBorder(),
             ),
