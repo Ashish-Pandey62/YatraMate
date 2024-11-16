@@ -477,8 +477,18 @@ class _TravelPageState extends State<TravelPage> {
                   255, 153, 109, 228), // Increases text size
               foregroundColor: const Color.fromARGB(
                   255, 235, 230, 230), // Set text color to black
+              foregroundColor: const Color.fromARGB(
+                  255, 235, 230, 230), // Set text color to black
             ),
             onPressed: _createTour,
+            child: const Text(
+              'Start',
+              style: TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.bold, // Bold text
+                color: Colors.white, // Text color (optional)
+              ),
+            ),
             child: const Text(
               'Start',
               style: TextStyle(
