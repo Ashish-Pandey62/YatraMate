@@ -155,25 +155,25 @@ Widget build(BuildContext context) {
           const SizedBox(height: 20),
           TextField(
             controller: _usernameController,
-            decoration:  const InputDecoration(
+            decoration:  InputDecoration(
               labelText: 'Username',
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: 10),
           TextField(
             controller: _nameController,
-            decoration: const InputDecoration(
+            decoration:  InputDecoration(
               labelText: 'Name',
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: 10),
           TextField(
             controller: _emailController,
-            decoration:  InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Email',
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: 10),

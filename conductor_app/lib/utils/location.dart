@@ -10,6 +10,21 @@ import 'package:flutter/services.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
+Future<Map<String, dynamic>> fetchLocationData(String query) async {
+  final apiKey =
+      '5b3ce3597851110001cf6248966817b9279641689b1420ce56329a55'; // Replace with your API key
+  final url = Uri.parse(
+      'https://api.openrouteservice.org/geocode/search?api_key=$apiKey&text=$query');
+  final response = await http.get(url);
+
+  if (response.statusCode == 200) {
+    final data = json.decode(response.body);
+    return data;
+  } else {
+    throw Exception('Failed to load location data');
+  }
+}
+
 class SettingsOpener {
   static const _platform =
       MethodChannel('com.example.conductor_app/permission');
@@ -140,7 +155,7 @@ void stopBackgroundService() {
 
 @pragma('vm:entry-point')
 void onStart(ServiceInstance service) async {
-  String baseUrl = "http://192.168.75.211:8000";
+  String baseUrl = "http://192.168.75.99:8000";
   String updateLocationUrl = '$baseUrl/api/update-location/';
   final prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('auth_token');

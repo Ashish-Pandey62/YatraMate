@@ -29,9 +29,11 @@ INSTALLED_APPS = [
     'api',
     'accounts',
     'rest_framework.authtoken',
+    # 'corsheaders',
 ]
 
 MIDDLEWARE = [
+    # 'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -126,3 +128,10 @@ REST_FRAMEWORK = {
 
 
 AUTH_USER_MODEL = 'api.CustomUser'
+# CORS_ALLOWED_ORIGINS = "10.0.2.2:8000"
+
+# CORS_ALLOWED_ORIGINS = [
+#     "http://192.168.137.200:8000",  # Replace with your computer's IP and port
+# ]
+# CORS_ALLOW_ALL_ORIGINS = True
+    

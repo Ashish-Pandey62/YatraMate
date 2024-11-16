@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -9,6 +8,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:conductor_app/utils/location.dart';
 import 'dart:async';
+import 'dart:async';
+import 'package:logger/logger.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -56,7 +57,6 @@ class _MapPageState extends State<MapPage>
   }
 
   void _initializeVariale() async {
-    tourSD = '$baseUrl/api/all-active-tour/';
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString('auth_token');
   }
@@ -96,10 +96,10 @@ class _MapPageState extends State<MapPage>
               coordinates.map((coord) => LatLng(coord[1], coord[0])).toList();
         });
       } else {
-        print('Failed to fetch route: ${response.body}');
+        Logger().e('Failed to fetch route: ${response.body}');
       }
     } catch (e) {
-      print('Error fetching route: $e');
+      Logger().e('Error fetching route: $e');
     }
   }
 
@@ -115,7 +115,7 @@ class _MapPageState extends State<MapPage>
         tours = jsonDecode(response.body)['data'];
       });
     } else {
-      print('Failed to load tours');
+      Logger().e('Failed to load tours');
     }
 
     Timer.periodic(const Duration(seconds: 3), (timer) async {
@@ -139,6 +139,8 @@ class _MapPageState extends State<MapPage>
   }
 
   void _onBusClicked(int index, LatLng busPosition, int id) async {
+    tourSD = '$baseUrl/api/tour/$id/source-destination-coords/';
+
     if (index == activeBusIndex) {
       // If the same bus is clicked, deactivate the route
       setState(() {
@@ -156,13 +158,11 @@ class _MapPageState extends State<MapPage>
       });
 
       final responseData = json.decode(response.body);
-      print(responseData);
-      print("hahaha");
-      LatLng source = LatLng(double.parse(responseData['source']['latitude']),
-          double.parse(responseData['source']['longitude']));
-      LatLng destination = LatLng(
-          double.parse(responseData['destination']['latitude']),
-          double.parse(responseData['destination']['longitude']));
+      Logger().i(responseData);
+      LatLng source = LatLng(responseData['source']['latitude'],
+          responseData['source']['longitude']);
+      LatLng destination = LatLng(responseData['destination']['latitude'],
+          responseData['destination']['longitude']);
       fetchRoute(source, destination);
     }
   }
@@ -224,6 +224,23 @@ class _MapPageState extends State<MapPage>
                       ),
                     ],
                   ),
+                if (routePoints.isNotEmpty)
+                  MarkerLayer(markers: [
+                    Marker(
+                      point: routePoints.first,
+                      child: Icon(
+                        Icons.location_on,
+                        color: Colors.red,
+                      ),
+                    ),
+                    Marker(
+                      point: routePoints.last,
+                      child: Icon(
+                        Icons.location_on,
+                        color: Colors.green,
+                      ),
+                    ),
+                  ]),
               ],
             )
           else
