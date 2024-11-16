@@ -443,26 +443,30 @@ class _TravelPageState extends State<TravelPage> {
           child:
               // TextField to input bus number
               TextField(
-              controller: busNumberController,
-              decoration: InputDecoration(
-                labelText: ' Enter Bus Number',
-                labelStyle: TextStyle(fontSize: 18),
-                filled: true,
-                fillColor: busNumberController.text.isNotEmpty
-                    ? Colors.grey[300]
-                    : Colors.grey[50],
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                    color: Colors.grey, // Border color
-                    width: 1, // Border width
-                  ),
+            controller: busNumberController,
+            decoration: InputDecoration(
+              hintText: 'Enter Bus Number',
+              hintStyle: TextStyle(fontSize: 18),
+              alignLabelWithHint: true, // Centers the hint text vertically
+              filled: true,
+              fillColor: busNumberController.text.isNotEmpty
+                  ? Colors.grey[300]
+                  : Colors.grey[50],
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: Colors.grey, // Border color
+                  width: 1, // Border width
                 ),
-                contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 20), // Controls padding inside the text field
               ),
-              style: TextStyle(fontSize: 18), // Increases text size
+              contentPadding: EdgeInsets.symmetric(
+                vertical: 15,
+                horizontal: 20, // Controls padding inside the text field
+              ),
             ),
-
+            style: TextStyle(fontSize: 18), // Increases text size
+            textAlign: TextAlign.center, // Aligns the entered text
+          ),
         ),
         Padding(
           padding: const EdgeInsets.only(top: 20.0),
@@ -474,16 +478,18 @@ class _TravelPageState extends State<TravelPage> {
               ),
               backgroundColor: const Color.fromARGB(
                   255, 153, 109, 228), // Increases text size
-              foregroundColor: const Color.fromARGB(255, 235, 230, 230), // Set text color to black
+              foregroundColor: const Color.fromARGB(
+                  255, 235, 230, 230), // Set text color to black
             ),
             onPressed: _createTour,
-            child: const Text('Start',
-          style: TextStyle(
-          fontSize: 26,
-          fontWeight: FontWeight.bold,  // Bold text
-    color: Colors.white,    // Text color (optional)
-  ),
-          ),
+            child: const Text(
+              'Start',
+              style: TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.bold, // Bold text
+                color: Colors.white, // Text color (optional)
+              ),
+            ),
           ),
         ),
       ],
