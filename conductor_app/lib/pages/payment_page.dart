@@ -176,7 +176,7 @@ if (price <= 0) {
           shadows: [
             Shadow(
               blurRadius: 10.0,
-              color: Colors.white,
+              color: Colors.blue,
               offset: Offset(0, 0),
             ),
           ],
