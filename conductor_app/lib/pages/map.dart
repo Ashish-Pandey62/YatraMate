@@ -191,8 +191,8 @@ class _MapPageState extends State<MapPage>
                   right: 10,
                   child: FloatingActionButton(
                     onPressed: () {
-                      _getCurrentLocation();
-                      // mapController.rotate(0);
+                      // _getCurrentLocation();
+                      mapController.rotate(0);
                     },
                     child: Icon(Icons.navigation),
                   ),
