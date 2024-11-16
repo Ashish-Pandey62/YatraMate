@@ -87,7 +87,8 @@ class _LoginPageState extends State<LoginPage> {
           fontSize: 16,
         ),
       ),
-      backgroundColor: isSuccess ? const Color.fromARGB(255, 13, 161, 21) : Colors.red,
+      backgroundColor:
+          isSuccess ? const Color.fromARGB(255, 13, 161, 21) : Colors.red,
       duration: const Duration(seconds: 3),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
@@ -203,7 +204,7 @@ class _LoginPageState extends State<LoginPage> {
                           onPressed: _login,
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
-                                const Color.fromARGB(255, 67, 56, 120),
+                                const Color.fromARGB(255, 58, 33, 222),
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 50, vertical: 15),
                             shape: RoundedRectangleBorder(
@@ -227,8 +228,7 @@ class _LoginPageState extends State<LoginPage> {
                           child: const Text(
                             'Not registered? Register now',
                             style: TextStyle(
-                              color: Color.fromARGB(255, 67, 56, 120),
-                            ),
+                                color: Color.fromRGBO(33, 124, 243, 1)),
                           ),
                         ),
                       ],
@@ -241,4 +241,4 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-}
+}   
