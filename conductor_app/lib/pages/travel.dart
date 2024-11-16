@@ -355,88 +355,144 @@ class _TravelPageState extends State<TravelPage> {
     });
   }
 
-  Widget _buildNoActiveTour(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Padding(
-          padding: EdgeInsets.only(top: 20.0),
-          child: Center(
-            child: Text(
-              'No active tour',
-              style: TextStyle(
-                fontSize: 14,
-                fontStyle: FontStyle.italic,
-                color: Colors.red,
-                fontWeight: FontWeight.bold,
-              ),
+
+Widget _buildNoActiveTour(BuildContext context) {
+  return Column(
+    children: [
+      const Padding(
+        padding: EdgeInsets.only(top: 80.0),
+        child: Center(
+          child: Text(
+            'No active tour',
+            style: TextStyle(
+              fontSize: 14,
+              fontStyle: FontStyle.italic,
+              color: Colors.red,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
-        Column(
-          children: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: sourceController.text.isNotEmpty
-                    ? Colors.purple[200]
-                    : Colors.grey[100],
-              ),
-              onPressed: () => _openMapAdjuster(sourceController),
-              child: const Text('Select Starting Point'),
+      ),
+       const Padding(
+        padding: EdgeInsets.only(top: 20.0),
+          child: Text(
+            'Create New Tour',
+            style: TextStyle(
+              fontSize: 25,
             ),
-            const SizedBox(height: 10), // Add spacing between buttons
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: destinationController.text.isNotEmpty
-                    ? Colors.green[100]
-                    : Colors.grey[100],
+          ),
+      ),
+      
+     Padding(
+  padding: const EdgeInsets.only(top: 10.0),
+  child: ElevatedButton(
+    style: ElevatedButton.styleFrom(
+      minimumSize: const Size(350, 60), // Increases button width
+      backgroundColor: sourceController.text.isNotEmpty
+          ? Colors.grey[300]
+          : Colors.grey[50],
+      textStyle: const TextStyle(fontSize: 18), // Increases text size
+      side: BorderSide(                 // Adds border
+        color: Colors.grey,            // Border color
+        width: 1,                      // Border width
+      ),
+      shape: RoundedRectangleBorder(    // Optional: adds rounded corners to the button
+        borderRadius: BorderRadius.circular(12),
+      ),
+    ),
+    onPressed: () => _openMapAdjuster(sourceController),
+    child: const Text(
+      'Select Starting Point',
+      style: TextStyle(color: Colors.black),
+    ),
+  ),
+),
+
+      Padding(
+        padding: const EdgeInsets.only(top: 10.0),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size(350, 60), // Increases button length (width)
+            backgroundColor: destinationController.text.isNotEmpty
+                ? Colors.grey[300]
+                : Colors.grey[50],
+            textStyle: const TextStyle(fontSize: 18), // Increases text size
+            side: BorderSide(                 // Adds border
+        color: Colors.grey,            // Border color
+        width: 1,                      // Border width
+      ),
+      shape: RoundedRectangleBorder(    // Optional: adds rounded corners to the button
+        borderRadius: BorderRadius.circular(12),
+      ),
+          ),
+          onPressed: () => _openMapAdjuster(destinationController),
+          child: const Text('Select Destination Point',
+           style: TextStyle(color: Colors.black),),
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.only(top: 20.0),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size(130, 60), 
+            textStyle: const TextStyle(fontSize: 19,),
+            backgroundColor: const Color.fromARGB(255, 153, 109, 228), // Increases text size
+            foregroundColor: Colors.black, // Set text color to black
+          ),
+          onPressed: _createTour,
+          child: const Text('Start'),
+        ),
+        ),
+    ],
+  );
+}
+
+Widget _buildCurrentTour(BuildContext context) {
+  return Column(
+    children: [
+       const SizedBox(height: 90),
+      Padding(
+        padding: const EdgeInsets.only(top: 20.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center, // Center the row
+          children: [
+            Icon(
+              Icons.check_circle, // Blue tick icon
+              color: Colors.green,  // Set icon color to blue
+              size: 30,            // Icon size
+            ),
+            const SizedBox(width: 10), // Space between icon and text
+            const Text(
+              'TOUR ACTIVATED',
+              style: TextStyle(
+                fontSize: 24,
+                color: Colors.black,
               ),
-              onPressed: () => _openMapAdjuster(destinationController),
-              child: const Text('Select Destination Point'),
             ),
           ],
         ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 20.0),
-          child: ElevatedButton(
-            onPressed: _createTour,
-            child: const Text('Create'),
-          ),
+      ),
+      const SizedBox(height: 10), // Space between text and list
+      Expanded(
+        child: ListView.builder(
+          itemCount: currentTour!['transactions'].length,
+          itemBuilder: (context, index) {
+            final transaction = currentTour!['transactions'][index];
+            return _buildTransactionTile(transaction);
+          },
         ),
-      ],
-    );
-  }
+      ),
+      ElevatedButton(
+        onPressed: _endTour,
+        child: const Text('End Tour'),
+      ),
+    ],
+  );
+}
 
-  Widget _buildCurrentTour(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-            'Current Tour: ${currentTour!['id']}',
-            style: const TextStyle(
-              fontSize: 24,
-              color: Colors.black,
-            ),
-          ),
-        ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: currentTour!['transactions'].length,
-            itemBuilder: (context, index) {
-              final transaction = currentTour!['transactions'][index];
-              return _buildTransactionTile(transaction);
-            },
-          ),
-        ),
-        ElevatedButton(
-          onPressed: _endTour,
-          child: const Text('End Tour'),
-        ),
-      ],
-    );
-  }
 
+
+  
   Widget _buildTransactionTile(Map<String, dynamic> transaction) {
     return ListTile(
       title: Column(
