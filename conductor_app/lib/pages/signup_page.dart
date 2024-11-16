@@ -105,7 +105,7 @@ Widget build(BuildContext context) {
       iconTheme: const IconThemeData(color: Colors.black),
       titleTextStyle: const TextStyle(color: Colors.black, fontSize: 20),
     ),
-    backgroundColor: Colors.white, // Set Scaffold background color to white
+    backgroundColor:Color.fromARGB(255, 255, 225, 255) , // Set Scaffold background color to white
     body: SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
