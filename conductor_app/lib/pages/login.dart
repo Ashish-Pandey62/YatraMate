@@ -88,7 +88,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
       backgroundColor:
-          isSuccess ? const Color.fromARGB(255, 13, 161, 21) : Colors.red,
+          isSuccess ? const Color.fromRGBO(76, 175, 80, 1): Colors.red,
       duration: const Duration(seconds: 3),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
@@ -111,7 +111,7 @@ class _LoginPageState extends State<LoginPage> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         backgroundColor:
-            const Color.fromARGB(255, 235, 195, 244), // Set background color
+           Color.fromARGB(255, 255, 225, 255), // Set background color
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(32.0),
@@ -123,11 +123,11 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   // Displaying the logo image
                   Image.asset(
-                    'assets/trans.png',
+                    'assets/logo.png',
                     width: 170,
                     height: 170,
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 20),
 
                   // "Welcome Back" text
                   const Text(
@@ -135,11 +135,11 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color:const Color.fromARGB(255, 50, 50, 50)
+,
                     ),
                   ),
-                  const SizedBox(height: 8),
-
+              
                   // "Log into your account" text
                   const Text(
                     'Log into your account',
@@ -148,7 +148,7 @@ class _LoginPageState extends State<LoginPage> {
                       color: Colors.black54,
                     ),
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 10),
 
                   // Username text field
                   TextField(
@@ -165,7 +165,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
 
                   // Password text field
                   TextField(
@@ -204,7 +204,7 @@ class _LoginPageState extends State<LoginPage> {
                           onPressed: _login,
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
-                                const Color.fromARGB(255, 58, 33, 222),
+                                 Colors.blue,
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 50, vertical: 15),
                             shape: RoundedRectangleBorder(

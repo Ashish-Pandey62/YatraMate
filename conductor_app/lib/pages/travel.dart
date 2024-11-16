@@ -39,6 +39,7 @@ class _TravelPageState extends State<TravelPage> {
   late String activeTourUrl;
   TextEditingController sourceController = TextEditingController();
   TextEditingController destinationController = TextEditingController();
+  TextEditingController busNumberController = TextEditingController();
   TextEditingController transit1Controller = TextEditingController();
   TextEditingController transit2Controller = TextEditingController();
 
@@ -75,6 +76,7 @@ class _TravelPageState extends State<TravelPage> {
       // Update the state to trigger a rebuild
       sourceController;
       destinationController;
+      busNumberController;
     });
   }
 
@@ -355,144 +357,182 @@ class _TravelPageState extends State<TravelPage> {
     });
   }
 
-
-Widget _buildNoActiveTour(BuildContext context) {
-  return Column(
-    children: [
-      const Padding(
-        padding: EdgeInsets.only(top: 80.0),
-        child: Center(
+  Widget _buildNoActiveTour(BuildContext context) {
+    return Column(
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(top: 80.0),
+          child: Center(
+            child: Text(
+              'No active tour',
+              style: TextStyle(
+                fontSize: 16,
+                // fontStyle: FontStyle.italic,
+                color: Color.fromARGB(255, 171, 23, 13),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+        const Padding(
+          padding: EdgeInsets.only(top: 20.0),
           child: Text(
-            'No active tour',
+            'Create New Tour',
             style: TextStyle(
-              fontSize: 14,
-              fontStyle: FontStyle.italic,
-              color: Colors.red,
+              fontSize: 24,
+              color: Color.fromARGB(255, 21, 8, 7),
               fontWeight: FontWeight.bold,
             ),
           ),
         ),
-      ),
-       const Padding(
-        padding: EdgeInsets.only(top: 20.0),
-          child: Text(
-            'Create New Tour',
-            style: TextStyle(
-              fontSize: 25,
-            ),
-          ),
-      ),
-      
-     Padding(
-  padding: const EdgeInsets.only(top: 10.0),
-  child: ElevatedButton(
-    style: ElevatedButton.styleFrom(
-      minimumSize: const Size(350, 60), // Increases button width
-      backgroundColor: sourceController.text.isNotEmpty
-          ? Colors.grey[300]
-          : Colors.grey[50],
-      textStyle: const TextStyle(fontSize: 18), // Increases text size
-      side: BorderSide(                 // Adds border
-        color: Colors.grey,            // Border color
-        width: 1,                      // Border width
-      ),
-      shape: RoundedRectangleBorder(    // Optional: adds rounded corners to the button
-        borderRadius: BorderRadius.circular(12),
-      ),
-    ),
-    onPressed: () => _openMapAdjuster(sourceController),
-    child: const Text(
-      'Select Starting Point',
-      style: TextStyle(color: Colors.black),
-    ),
-  ),
-),
-
-      Padding(
-        padding: const EdgeInsets.only(top: 10.0),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            minimumSize: const Size(350, 60), // Increases button length (width)
-            backgroundColor: destinationController.text.isNotEmpty
-                ? Colors.grey[300]
-                : Colors.grey[50],
-            textStyle: const TextStyle(fontSize: 18), // Increases text size
-            side: BorderSide(                 // Adds border
-        color: Colors.grey,            // Border color
-        width: 1,                      // Border width
-      ),
-      shape: RoundedRectangleBorder(    // Optional: adds rounded corners to the button
-        borderRadius: BorderRadius.circular(12),
-      ),
-          ),
-          onPressed: () => _openMapAdjuster(destinationController),
-          child: const Text('Select Destination Point',
-           style: TextStyle(color: Colors.black),),
-        ),
-      ),
-      Padding(
-        padding: const EdgeInsets.only(top: 20.0),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            minimumSize: const Size(130, 60), 
-            textStyle: const TextStyle(fontSize: 19,),
-            backgroundColor: const Color.fromARGB(255, 153, 109, 228), // Increases text size
-            foregroundColor: Colors.black, // Set text color to black
-          ),
-          onPressed: _createTour,
-          child: const Text('Start'),
-        ),
-        ),
-    ],
-  );
-}
-
-Widget _buildCurrentTour(BuildContext context) {
-  return Column(
-    children: [
-       const SizedBox(height: 90),
-      Padding(
-        padding: const EdgeInsets.only(top: 20.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center, // Center the row
-          children: [
-            Icon(
-              Icons.check_circle, // Blue tick icon
-              color: Colors.green,  // Set icon color to blue
-              size: 30,            // Icon size
-            ),
-            const SizedBox(width: 10), // Space between icon and text
-            const Text(
-              'TOUR ACTIVATED',
-              style: TextStyle(
-                fontSize: 24,
-                color: Colors.black,
+        Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size(350, 60), // Increases button width
+              backgroundColor: sourceController.text.isNotEmpty
+                  ? Colors.grey[300]
+                  : Colors.grey[50],
+              textStyle: const TextStyle(fontSize: 18), // Increases text size
+              side: BorderSide(
+                // Adds border
+                color: Colors.grey, // Border color
+                width: 1, // Border width
+              ),
+              shape: RoundedRectangleBorder(
+                // Optional: adds rounded corners to the button
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
-          ],
+            onPressed: () => _openMapAdjuster(sourceController),
+            child: const Text(
+              'Select Starting Point',
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
         ),
-      ),
-      const SizedBox(height: 10), // Space between text and list
-      Expanded(
-        child: ListView.builder(
-          itemCount: currentTour!['transactions'].length,
-          itemBuilder: (context, index) {
-            final transaction = currentTour!['transactions'][index];
-            return _buildTransactionTile(transaction);
-          },
+        Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              minimumSize:
+                  const Size(350, 60), // Increases button length (width)
+              backgroundColor: destinationController.text.isNotEmpty
+                  ? Colors.grey[300]
+                  : Colors.grey[50],
+              textStyle: const TextStyle(fontSize: 18), // Increases text size
+              side: BorderSide(
+                // Adds border
+                color: Colors.grey, // Border color
+                width: 1, // Border width
+              ),
+              shape: RoundedRectangleBorder(
+                // Optional: adds rounded corners to the button
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            onPressed: () => _openMapAdjuster(destinationController),
+            child: const Text(
+              'Select Destination Point',
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
         ),
-      ),
-      ElevatedButton(
-        onPressed: _endTour,
-        child: const Text('End Tour'),
-      ),
-    ],
-  );
-}
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child:
+              // TextField to input bus number
+              TextField(
+              controller: busNumberController,
+              decoration: InputDecoration(
+                labelText: ' Enter Bus Number',
+                labelStyle: TextStyle(fontSize: 18),
+                filled: true,
+                fillColor: busNumberController.text.isNotEmpty
+                    ? Colors.grey[300]
+                    : Colors.grey[50],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: Colors.grey, // Border color
+                    width: 1, // Border width
+                  ),
+                ),
+                contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 20), // Controls padding inside the text field
+              ),
+              style: TextStyle(fontSize: 18), // Increases text size
+            ),
 
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 20.0),
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size(130, 60),
+              textStyle: const TextStyle(
+                fontSize: 18,
+              ),
+              backgroundColor: const Color.fromARGB(
+                  255, 153, 109, 228), // Increases text size
+              foregroundColor: const Color.fromARGB(255, 235, 230, 230), // Set text color to black
+            ),
+            onPressed: _createTour,
+            child: const Text('Start',
+          style: TextStyle(
+          fontSize: 26,
+          fontWeight: FontWeight.bold,  // Bold text
+    color: Colors.white,    // Text color (optional)
+  ),
+          ),
+          ),
+        ),
+      ],
+    );
+  }
 
+  Widget _buildCurrentTour(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: 90),
+        Padding(
+          padding: const EdgeInsets.only(top: 20.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center, // Center the row
+            children: [
+              Icon(
+                Icons.check_circle, // Blue tick icon
+                color: Colors.green, // Set icon color to blue
+                size: 30, // Icon size
+              ),
+              const SizedBox(width: 10), // Space between icon and text
+              const Text(
+                'TOUR ACTIVATED',
+                style: TextStyle(
+                  fontSize: 24,
+                  color: Colors.black,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10), // Space between text and list
+        Expanded(
+          child: ListView.builder(
+            itemCount: currentTour!['transactions'].length,
+            itemBuilder: (context, index) {
+              final transaction = currentTour!['transactions'][index];
+              return _buildTransactionTile(transaction);
+            },
+          ),
+        ),
+        ElevatedButton(
+          onPressed: _endTour,
+          child: const Text('End Tour'),
+        ),
+      ],
+    );
+  }
 
-  
   Widget _buildTransactionTile(Map<String, dynamic> transaction) {
     return ListTile(
       title: Column(
@@ -548,7 +588,7 @@ Widget _buildCurrentTour(BuildContext context) {
         "source_lng": sourceController.text.split(',')[1],
         "destination_lat": destinationController.text.split(',')[0],
         "destination_lng": destinationController.text.split(',')[1],
-        "veh_num": "BA 1 PA 1234",
+        "veh_num": busNumberController.text,
       }),
     );
 
