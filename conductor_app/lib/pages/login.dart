@@ -138,8 +138,7 @@ class _LoginPageState extends State<LoginPage> {
                       color: Colors.black87,
                     ),
                   ),
-                  const SizedBox(height: 8),
-
+              
                   // "Log into your account" text
                   const Text(
                     'Log into your account',
@@ -148,7 +147,7 @@ class _LoginPageState extends State<LoginPage> {
                       color: Colors.black54,
                     ),
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 10),
 
                   // Username text field
                   TextField(
@@ -165,7 +164,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
 
                   // Password text field
                   TextField(
