@@ -144,7 +144,7 @@ class _HomePageState extends State<HomePage> {
          actions: [
           IconButton(
             icon: const Icon(Icons.logout,
-             color: Colors.white, // Set the icon color to white
+             color: Colors.black, // Set the icon color to white
     size: 25, // Increase the icon size (adjust as needed)
             ),
             onPressed: _logout,
