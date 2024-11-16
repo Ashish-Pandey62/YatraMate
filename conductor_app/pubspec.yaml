@@ -103,7 +103,9 @@ flutter:
     - assets/play_store_512.png
     - assets/bus.png
     - assets/logo.png
+    - assets/Logos.png
     - assets/trans.png
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

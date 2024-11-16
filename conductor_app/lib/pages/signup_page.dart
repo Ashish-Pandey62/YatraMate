@@ -101,11 +101,19 @@ class _SignupPageState extends State<SignupPage> {
 Widget build(BuildContext context) {
   return Scaffold(
     appBar: AppBar(
-      backgroundColor: Colors.white, // Set AppBar background color to white
+<<<<<<< HEAD
+      backgroundColor:  Color.fromARGB(255, 255, 225, 255), // Set AppBar background color to white
       iconTheme: const IconThemeData(color: Colors.black),
       titleTextStyle: const TextStyle(color: Colors.black, fontSize: 20),
     ),
-    backgroundColor: Colors.white, // Set Scaffold background color to white
+    backgroundColor:  Color.fromARGB(255, 255, 225, 255), // Set Scaffold background color to white
+=======
+      backgroundColor: Color.fromARGB(255, 255, 225, 255) , // Set AppBar background color to white
+      iconTheme: const IconThemeData(color: Colors.black),
+      titleTextStyle: const TextStyle(color: Colors.black, fontSize: 20),
+    ),
+    backgroundColor:Color.fromARGB(255, 255, 225, 255) , // Set Scaffold background color to white
+>>>>>>> 092bd14268caa3307c8c12d6c746478c93227399
     body: SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
