@@ -56,7 +56,6 @@ class _MapPageState extends State<MapPage>
   }
 
   void _initializeVariale() async {
-    tourSD = '$baseUrl/api/all-active-tour/';
     SharedPreferences prefs = await SharedPreferences.getInstance();
     token = prefs.getString('auth_token');
   }
@@ -139,6 +138,8 @@ class _MapPageState extends State<MapPage>
   }
 
   void _onBusClicked(int index, LatLng busPosition, int id) async {
+    tourSD = '$baseUrl/api/tour/$id/source-destination-coords/';
+
     if (index == activeBusIndex) {
       // If the same bus is clicked, deactivate the route
       setState(() {
@@ -157,12 +158,10 @@ class _MapPageState extends State<MapPage>
 
       final responseData = json.decode(response.body);
       print(responseData);
-      print("hahaha");
-      LatLng source = LatLng(double.parse(responseData['source']['latitude']),
-          double.parse(responseData['source']['longitude']));
-      LatLng destination = LatLng(
-          double.parse(responseData['destination']['latitude']),
-          double.parse(responseData['destination']['longitude']));
+      LatLng source = LatLng(responseData['source']['latitude'],
+          responseData['source']['longitude']);
+      LatLng destination = LatLng(responseData['destination']['latitude'],
+          responseData['destination']['longitude']);
       fetchRoute(source, destination);
     }
   }
@@ -224,6 +223,22 @@ class _MapPageState extends State<MapPage>
                       ),
                     ],
                   ),
+                MarkerLayer(markers: [
+                  Marker(
+                    point: routePoints.first,
+                    child: Icon(
+                      Icons.location_on,
+                      color: Colors.red,
+                    ),
+                  ),
+                  Marker(
+                    point: routePoints.last,
+                    child: Icon(
+                      Icons.location_on,
+                      color: Colors.green,
+                    ),
+                  ),
+                ]),
               ],
             )
           else

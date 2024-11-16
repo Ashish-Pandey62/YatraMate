@@ -101,7 +101,7 @@ FocusScope.of(context).unfocus();
 final price = double.tryParse(_priceController.text) ?? 0;
 
 if (price <= 0) {
-  
+  FocusScope.of(context).unfocus();
   // If price is invalid, reset the QR data and display the error message
     setState(() {
       _isInvalidPrice = true;
@@ -263,7 +263,7 @@ if (price <= 0) {
 
           // Sub-box for price entry
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0), // Reduced padding
+            padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0), // Reduced padding
             decoration: BoxDecoration(
               color: Colors.grey.shade100, // Slight grey background
               borderRadius: BorderRadius.circular(8.0),
@@ -285,7 +285,7 @@ if (price <= 0) {
                 border: InputBorder.none, // No default border
               ),
               keyboardType: TextInputType.number,
-              style: const TextStyle(fontSize: 10.0), // Larger text style
+              style: const TextStyle(fontSize: 15.0), // Larger text style
             ),
           ),
         ],

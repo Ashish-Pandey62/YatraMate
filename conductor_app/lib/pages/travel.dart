@@ -336,55 +336,32 @@ class _TravelPageState extends State<TravelPage> {
         padding: const EdgeInsets.only(bottom: 50.0),
         child: currentTour == null
             ? Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'No active tour.',
-              style: TextStyle(
-                  fontSize: 24, color: Color.fromARGB(255, 0, 0, 0)),
-            ),
-            TextField(
-              controller: sourceController,
-              decoration: InputDecoration(labelText: 'Source'),
-            ),
-            TextField(
-              controller: destinationController,
-              decoration: InputDecoration(labelText: 'Destination'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                final sourceData =
-                await fetchLocationData(sourceController.text);
-                final destinationData =
-                await fetchLocationData(destinationController.text);
-
-                // Extracting coordinates (or use other data based on your needs)
-                final sourceCoordinates =
-                sourceData['features'][0]['geometry']['coordinates'];
-                final destinationCoordinates = destinationData['features']
-                [0]['geometry']['coordinates'];
-                // print(destinationCoordinates);
-                final response = await http.post(
-                  Uri.parse(tourCreateUrl),
-                  headers: {
-                    'Authorization': 'Token $token',
-                    'Content-Type': 'application/json',
-                  },
-                  body: jsonEncode({
-                    "source_lat":
-                    sourceCoordinates[1], // Pokhara latitude
-                    "source_lng":
-                    sourceCoordinates[0], // Pokhara longitude
-                    "destination_lat":
-                    destinationCoordinates[1], // Kathmandu latitude
-                    "destination_lng":
-                    destinationCoordinates[0] // Kathmandu longitude
-                  }),
-                );
-                if (response.statusCode != 200) {
-                  print(response.body);
-                }
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'No active tour.',
+                    style: TextStyle(
+                        fontSize: 24, color: Color.fromARGB(255, 0, 0, 0)),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () async {
+                      final response = await http.post(
+                        Uri.parse(tourCreateUrl),
+                        headers: {
+                          'Authorization': 'Token $token',
+                          'Content-Type': 'application/json',
+                        },
+                        body: jsonEncode({
+                          "source_lat": 28.176469,
+                          "source_lng": 83.008057,
+                          "destination_lat": 27.704060,
+                          "destination_lng": 85.102493
+                        }),
+                      );
+                      if (response.statusCode != 200) {
+                        print(response.body);
+                      }
 
                 // Logic to create a new tour
                 setState(() {
