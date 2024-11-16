@@ -1,6 +1,6 @@
 <h1>YatraMate</h1>
 <img src="https://github.com/Ashish-Pandey62/YatraMate/blob/main/conductor_app/assets/Logos.png" alt="YatraMate Logo" 
-  style="border-radius: 50%; width: 200px; height: 100px; object-fit: cover;">
+  style="border-radius: 50%; width: 200px; height: 200px; object-fit: cover;">
 QR-Based Offline Cashless System for Public Transport
 
 
