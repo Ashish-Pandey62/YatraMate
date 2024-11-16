@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -26,7 +27,7 @@ class _MapPageState extends State<MapPage>
   List<dynamic>? tours;
   double latitude = 0.0;
   double longitude = 0.0;
-
+  double _bearing = 1.0;
   // Kathmandu coordinates
   double sourceLatitude = 27.7172;
   double sourceLongitude = 85.3240;
@@ -54,6 +55,18 @@ class _MapPageState extends State<MapPage>
     _initializeVariale();
     _updateBusPosition();
     _getCurrentLocation();
+    _addMapEventListener();
+  }
+
+  // Listener to detect map movements and changes
+  void _addMapEventListener() {
+    mapController.mapEventStream.listen((event) {
+      setState(() {
+        if (event is MapEventRotate) {
+          _bearing = mapController.camera.rotation;
+        }
+      });
+    });
   }
 
   void _initializeVariale() async {
@@ -131,7 +144,7 @@ class _MapPageState extends State<MapPage>
       if (response.statusCode == 200) {
         setState(() {
           tours = jsonDecode(response.body)['data'];
-          print(tours);
+          // print(tours);
         });
       } else {
         print('Failed to load tours');
@@ -188,14 +201,26 @@ class _MapPageState extends State<MapPage>
                   userAgentPackageName: 'com.example.app',
                 ),
                 Positioned(
-                  top: 20,
-                  right: 10,
+                  top: 70,
+                  right: 20,
+                  child: GestureDetector(
+                      onTap: () {
+                        // Handle on tap action here
+                        mapController.rotate(0);
+                      },
+                      child: CompassWidget(
+                        bearing: _bearing,
+                      )),
+                ),
+                Positioned(
+                  bottom: 30,
+                  right: 20,
                   child: FloatingActionButton(
                     onPressed: () {
-                      // _getCurrentLocation();
-                      mapController.rotate(0);
+                      mapController.move(LatLng(latitude, longitude),
+                          mapController.camera.zoom);
                     },
-                    child: Icon(Icons.navigation),
+                    child: Icon(Icons.my_location),
                   ),
                 ),
                 if (routePoints.isNotEmpty)
@@ -204,7 +229,16 @@ class _MapPageState extends State<MapPage>
                     left: 10,
                     child: Container(
                       padding: EdgeInsets.all(8.0),
-                      color: Colors.white,
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(179, 255, 225, 255),
+                        border: Border.all(
+                          color: const Color.fromARGB(
+                              183, 92, 176, 244), // Border color
+                          width: 3, // Border width
+                        ),
+                        borderRadius: BorderRadius.circular(
+                            10), // Optional for rounded corners
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -218,9 +252,6 @@ class _MapPageState extends State<MapPage>
                           Text(
                             'Conductor: ${tours![activeBusIndex!]['conductor_name']}',
                           ),
-                          // Text(
-                          //   'Heading: ${tours![activeBusIndex!]['heading']}',
-                          // ),
                         ],
                       ),
                     ),
@@ -259,8 +290,9 @@ class _MapPageState extends State<MapPage>
                     polylines: [
                       Polyline(
                         points: routePoints,
-                        strokeWidth: 4.0,
+                        strokeWidth: 5.0,
                         color: Colors.blue,
+                        pattern: StrokePattern.dotted(),
                       ),
                     ],
                   ),
@@ -287,6 +319,21 @@ class _MapPageState extends State<MapPage>
             Center(child: CircularProgressIndicator()),
         ],
       ),
+    );
+  }
+}
+
+class CompassWidget extends StatelessWidget {
+  final double bearing;
+
+  const CompassWidget({super.key, required this.bearing});
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.rotate(
+      angle: bearing * (3.14159265359 / 180), // Convert bearing to radians
+      child: const Icon(Icons.navigation,
+          color: Color.fromARGB(255, 172, 38, 40), size: 50.0),
     );
   }
 }

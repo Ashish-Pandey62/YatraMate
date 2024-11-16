@@ -45,7 +45,7 @@ class _MapAdjusterScreenState extends State<MapAdjusterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Adjust Location'),
+        title: const Text('Choose Location'),
         actions: [
           IconButton(
             icon: const Icon(Icons.check),
@@ -104,7 +104,9 @@ class _MapAdjusterScreenState extends State<MapAdjusterScreen> {
                     controller: _locationController,
                     decoration: InputDecoration(
                       hintText: 'Enter location',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 10,
                         vertical: 5,
