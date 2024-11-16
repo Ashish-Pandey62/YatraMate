@@ -367,17 +367,20 @@ class _TravelPageState extends State<TravelPage> {
                 child: Text(
                   'No active tour.',
                   style: TextStyle(
-                    fontSize: 24,
-                    color: Color.fromARGB(255, 0, 0, 0),
+                    fontSize: 14,
+                    fontStyle: FontStyle.italic,
+                    color: Colors.red, // Alert or warning style
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
             ),
+
             Center(
               child: Container(
                 padding: const EdgeInsets.all(20.0),
                 decoration: BoxDecoration(
-                  color: Colors.grey[200],
+                  color: Colors.purple[50],
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Column(
@@ -454,7 +457,7 @@ class _TravelPageState extends State<TravelPage> {
 
                   locationService(context);
                 },
-                child: const Text('Create New Tour'),
+                child: const Text('Create'),
               ),
             ),
           ],
