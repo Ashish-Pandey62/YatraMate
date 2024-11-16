@@ -386,6 +386,10 @@ class _TravelPageState extends State<TravelPage> {
 
             Center(
               child: Container(
+                margin: EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width * 0.05, // 5% of screen width
+                  vertical: MediaQuery.of(context).size.height * 0.02, // 2% of screen height
+                ),
                 padding: const EdgeInsets.all(20.0),
                 decoration: BoxDecoration(
                   color: Colors.purple[50],
@@ -394,38 +398,35 @@ class _TravelPageState extends State<TravelPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    ElevatedButton(
-                      onPressed: () => _openMapAdjuster(sourceController),
-                      child: const Text('Select Source'),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Adds spacing between buttons
+                      children: [
+                        ElevatedButton(
+                          onPressed: () => _openMapAdjuster(sourceController),
+                          child: const Text('Source'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () => _openMapAdjuster(destinationController),
+                          child: const Text('Destination'),
+                        ),
+                      ],
                     ),
-                    if (sourceController.text.isNotEmpty)
+                    if (sourceController.text.isNotEmpty || destinationController.text.isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0),
-                        child: Text('Source: ${sourceController.text}'),
-                      ),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: () => _openMapAdjuster(transit1Controller),
-                      child: const Text('Select Transit'),
-                    ),
-                    if (transit1Controller.text.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Text('Transit: ${transit1Controller.text}'),
-                      ),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: () => _openMapAdjuster(destinationController),
-                      child: const Text('Select Destination'),
-                    ),
-                    if (destinationController.text.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Text(
-                            'Destination: ${destinationController.text}'),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start, // Aligns text to the left
+                          children: [
+                            if (sourceController.text.isNotEmpty)
+                              Text('Source: ${sourceController.text}'),
+                            if (destinationController.text.isNotEmpty)
+                              Text('Destination: ${destinationController.text}'),
+                          ],
+                        ),
                       ),
                   ],
                 ),
+
               ),
             ),
             Padding(
