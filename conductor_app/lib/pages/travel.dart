@@ -12,6 +12,9 @@ import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
 import 'package:flutter_ignorebatteryoptimization/flutter_ignorebatteryoptimization.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:conductor_app/utils/map_adjust.dart';
 
 // Global variable to store current tour info
 Map<String, dynamic>? currentTour; // Null means no tour is active
@@ -36,19 +39,37 @@ class _TravelPageState extends State<TravelPage> {
   late String activeTourUrl;
   TextEditingController sourceController = TextEditingController();
   TextEditingController destinationController = TextEditingController();
+  TextEditingController transit1Controller = TextEditingController();
+  TextEditingController transit2Controller = TextEditingController();
 
-  Future<Map<String, dynamic>> fetchLocationData(String query) async {
-    final apiKey =
-        '5b3ce3597851110001cf6248966817b9279641689b1420ce56329a55'; // Replace with your API key
-    final url = Uri.parse(
-        'https://api.openrouteservice.org/geocode/search?api_key=$apiKey&text=$query');
-    final response = await http.get(url);
+  // Function to show the Map Adjuster for source or destination coordinates
+  Future<void> _openMapAdjuster(TextEditingController controller) async {
+    // Get the initial coordinates (or default to a location if empty)
+    String text = controller.text;
+    double lat = 27.7172; // Default latitude (Kathmandu)
+    double lng = 85.3240; // Default longitude (Kathmandu)
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      return data;
-    } else {
-      throw Exception('Failed to load location data');
+    if (text.isNotEmpty) {
+      // You can use an API to get coordinates from the text (e.g., OpenRouteService)
+      // For simplicity, let's assume the coordinates are predefined here.
+      // You can replace this with a real lookup or validation logic.
+      // Fetch coordinates for the location (you can use your existing API logic here)
+      lat = 27.7172; // Replace with actual lat from user input
+      lng = 85.3240; // Replace with actual lng from user input
+    }
+
+    final newLocation = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MapAdjusterScreen(
+          initialPosition: LatLng(lat, lng),
+        ),
+      ),
+    );
+
+    if (newLocation != null && newLocation is LatLng) {
+      // Update the text field with the new coordinates
+      controller.text = '${newLocation.latitude}, ${newLocation.longitude}';
     }
   }
 
@@ -343,28 +364,56 @@ class _TravelPageState extends State<TravelPage> {
                     style: TextStyle(
                         fontSize: 24, color: Color.fromARGB(255, 0, 0, 0)),
                   ),
-                  TextField(
-                    controller: sourceController,
-                    decoration: InputDecoration(labelText: 'Source'),
+                  ElevatedButton(
+                    onPressed: () => _openMapAdjuster(sourceController),
+                    child: const Text('Select Source'),
                   ),
-                  TextField(
-                    controller: destinationController,
-                    decoration: InputDecoration(labelText: 'Destination'),
+                  if (sourceController.text.isNotEmpty)
+                    Text('Source: ${sourceController.text}'),
+                  ElevatedButton(
+                    onPressed: () => _openMapAdjuster(transit1Controller),
+                    child: const Text('Select Transit'),
                   ),
+                  if (transit1Controller.text.isNotEmpty)
+                    Text('Source: ${transit1Controller.text}'),
+                  ElevatedButton(
+                    onPressed: () => _openMapAdjuster(destinationController),
+                    child: const Text('Select Destination'),
+                  ),
+                  if (destinationController.text.isNotEmpty)
+                    Text('Source: ${destinationController.text}'),
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () async {
-                      final sourceData =
-                          await fetchLocationData(sourceController.text);
-                      final destinationData =
-                          await fetchLocationData(destinationController.text);
+                      print(destinationController.text);
+                      // final sourceData =
+                      //     await fetchLocationData(sourceController.text);
+                      // final destinationData =
+                      //     await fetchLocationData(destinationController.text);
 
-                      // Extracting coordinates (or use other data based on your needs)
-                      final sourceCoordinates =
-                          sourceData['features'][0]['geometry']['coordinates'];
-                      final destinationCoordinates = destinationData['features']
-                          [0]['geometry']['coordinates'];
+                      // // Extracting coordinates (or use other data based on your needs)
+                      // final sourceCoordinates =
+                      //     sourceData['features'][0]['geometry']['coordinates'];
+                      // final destinationCoordinates = destinationData['features']
+                      //     [0]['geometry']['coordinates'];
                       // print(destinationCoordinates);
+                      // final response = await http.post(
+                      //   Uri.parse(tourCreateUrl),
+                      //   headers: {
+                      //     'Authorization': 'Token $token',
+                      //     'Content-Type': 'application/json',
+                      //   },
+                      //   body: jsonEncode({
+                      //     "source_lat":
+                      //         sourceCoordinates[1], // Pokhara latitude
+                      //     "source_lng":
+                      //         sourceCoordinates[0], // Pokhara longitude
+                      //     "destination_lat":
+                      //         destinationCoordinates[1], // Kathmandu latitude
+                      //     "destination_lng":
+                      //         destinationCoordinates[0] // Kathmandu longitude
+                      //   }),
+                      // );
                       final response = await http.post(
                         Uri.parse(tourCreateUrl),
                         headers: {
@@ -372,16 +421,17 @@ class _TravelPageState extends State<TravelPage> {
                           'Content-Type': 'application/json',
                         },
                         body: jsonEncode({
-                          "source_lat":
-                              sourceCoordinates[1], // Pokhara latitude
-                          "source_lng":
-                              sourceCoordinates[0], // Pokhara longitude
-                          "destination_lat":
-                              destinationCoordinates[1], // Kathmandu latitude
-                          "destination_lng":
-                              destinationCoordinates[0] // Kathmandu longitude
+                          "source_lat": sourceController.text
+                              .split(',')[0], // Pokhara latitude
+                          "source_lng": sourceController.text
+                              .split(',')[1], // Pokhara longitude
+                          "destination_lat": destinationController.text
+                              .split(',')[0], // Kathmandu latitude
+                          "destination_lng": destinationController.text
+                              .split(',')[1], // Kathmandu longitude
                         }),
                       );
+
                       if (response.statusCode != 200) {
                         print(response.body);
                       }
@@ -392,7 +442,7 @@ class _TravelPageState extends State<TravelPage> {
                         currentTour = (data['tour_data']);
                       });
 
-                      locationService(context);
+                      // locationService(context);
                     },
                     child: const Text('Create New Tour'),
                   ),
