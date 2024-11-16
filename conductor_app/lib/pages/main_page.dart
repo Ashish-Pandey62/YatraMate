@@ -15,12 +15,12 @@ class MainPage extends StatefulWidget {
   State<MainPage> createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin {
+class _MainPageState extends State<MainPage>
+    with SingleTickerProviderStateMixin {
   int myIndex = 0; // Default page index
   String userRole = 'traveller'; // Default role
   late AnimationController _animationController;
   late Animation<double> _bounceAnimation;
-
 
   @override
   void initState() {
@@ -36,7 +36,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   }
 
   Future<void> _loadUserRole() async {
-    myIndex =1;
+    myIndex = 1;
     initializeService(); // Initialize background service
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -46,9 +46,8 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
 
   List<Widget> getWidgetList() {
     return [
-      
       userRole == 'conductor' ? const TravelPage() : const PaymentPage(),
-       const HomePage(),
+      const HomePage(),
       const MapPage(),
     ];
   }
@@ -77,14 +76,14 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
           ),
         ],
       ),
-
       body: SingleChildScrollView(
         child: SizedBox(
-          height: MediaQuery.of(context).size.height - kToolbarHeight - kBottomNavigationBarHeight,
+          height: MediaQuery.of(context).size.height -
+              kToolbarHeight -
+              kBottomNavigationBarHeight,
           child: getWidgetList()[myIndex],
         ),
       ),
-      
       bottomNavigationBar: BottomNavigationBar(
         showSelectedLabels: false,
         showUnselectedLabels: false,
@@ -94,9 +93,9 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
               myIndex = index;
             });
             _animationController
-                ..reset()
-                ..forward(); // Trigger the bounce effect
-            }
+              ..reset()
+              ..forward(); // Trigger the bounce effect
+          }
         },
         currentIndex: myIndex,
         items: [
@@ -135,6 +134,3 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     );
   }
 }
-        
-
-

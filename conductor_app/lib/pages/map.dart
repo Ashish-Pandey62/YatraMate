@@ -131,6 +131,7 @@ class _MapPageState extends State<MapPage>
       if (response.statusCode == 200) {
         setState(() {
           tours = jsonDecode(response.body)['data'];
+          print(tours);
         });
       } else {
         print('Failed to load tours');
@@ -187,7 +188,7 @@ class _MapPageState extends State<MapPage>
                   userAgentPackageName: 'com.example.app',
                 ),
                 Positioned(
-                  top: 10,
+                  top: 20,
                   right: 10,
                   child: FloatingActionButton(
                     onPressed: () {
@@ -197,6 +198,33 @@ class _MapPageState extends State<MapPage>
                     child: Icon(Icons.navigation),
                   ),
                 ),
+                if (routePoints.isNotEmpty)
+                  Positioned(
+                    bottom: 40,
+                    left: 10,
+                    child: Container(
+                      padding: EdgeInsets.all(8.0),
+                      color: Colors.white,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Vehicle Number: ${tours![activeBusIndex!]['veh_num']}',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            'Tour ID : ${tours![activeBusIndex!]['id']}',
+                          ),
+                          Text(
+                            'Conductor: ${tours![activeBusIndex!]['conductor_name']}',
+                          ),
+                          // Text(
+                          //   'Heading: ${tours![activeBusIndex!]['heading']}',
+                          // ),
+                        ],
+                      ),
+                    ),
+                  ),
                 MarkerLayer(markers: [
                   for (int i = 0; i < (tours?.length ?? 0); i++)
                     Marker(

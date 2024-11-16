@@ -71,6 +71,11 @@ class _TravelPageState extends State<TravelPage> {
       // Update the text field with the new coordinates
       controller.text = '${newLocation.latitude}, ${newLocation.longitude}';
     }
+    setState(() {
+      // Update the state to trigger a rebuild
+      sourceController;
+      destinationController;
+    });
   }
 
   //remove battery optimization
@@ -350,59 +355,57 @@ class _TravelPageState extends State<TravelPage> {
     });
   }
 
- Widget _buildNoActiveTour(BuildContext context) {
-  return Column(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      const Padding(
-        padding: EdgeInsets.only(top: 20.0),
-        child: Center(
-          child: Text(
-            'No active tour',
-            style: TextStyle(
-              fontSize: 14,
-              fontStyle: FontStyle.italic,
-              color: Colors.red,
-              fontWeight: FontWeight.bold,
+  Widget _buildNoActiveTour(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(top: 20.0),
+          child: Center(
+            child: Text(
+              'No active tour',
+              style: TextStyle(
+                fontSize: 14,
+                fontStyle: FontStyle.italic,
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),
-      ),
-      Column(
-        children: [
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: sourceController.text.isNotEmpty
-                  ? Colors.purple[200]
-                  : Colors.grey[100],
+        Column(
+          children: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: sourceController.text.isNotEmpty
+                    ? Colors.purple[200]
+                    : Colors.grey[100],
+              ),
+              onPressed: () => _openMapAdjuster(sourceController),
+              child: const Text('Select Starting Point'),
             ),
-            onPressed: () => _openMapAdjuster(sourceController),
-            child: const Text('Select Starting Point'),
-          ),
-          const SizedBox(height: 10), // Add spacing between buttons
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: destinationController.text.isNotEmpty
-                  ? Colors.green[100]
-                  : Colors.grey[100],
+            const SizedBox(height: 10), // Add spacing between buttons
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: destinationController.text.isNotEmpty
+                    ? Colors.green[100]
+                    : Colors.grey[100],
+              ),
+              onPressed: () => _openMapAdjuster(destinationController),
+              child: const Text('Select Destination Point'),
             ),
-            onPressed: () => _openMapAdjuster(destinationController),
-            child: const Text('Select Destination Point'),
-          ),
-        ],
-      ),
-      Padding(
-        padding: const EdgeInsets.only(bottom: 20.0),
-        child: ElevatedButton(
-          onPressed: _createTour,
-          child: const Text('Create'),
+          ],
         ),
-      ),
-    ],
-  );
-}
-
-
+        Padding(
+          padding: const EdgeInsets.only(bottom: 20.0),
+          child: ElevatedButton(
+            onPressed: _createTour,
+            child: const Text('Create'),
+          ),
+        ),
+      ],
+    );
+  }
 
   Widget _buildCurrentTour(BuildContext context) {
     return Column(
@@ -489,6 +492,7 @@ class _TravelPageState extends State<TravelPage> {
         "source_lng": sourceController.text.split(',')[1],
         "destination_lat": destinationController.text.split(',')[0],
         "destination_lng": destinationController.text.split(',')[1],
+        "veh_num": "BA 1 PA 1234",
       }),
     );
 
