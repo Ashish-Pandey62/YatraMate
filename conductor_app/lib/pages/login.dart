@@ -129,7 +129,7 @@ class _LoginPageState extends State<LoginPage> {
 
                   // "Welcome Back" text
                   const Text(
-                    'Welcome back',
+                    'Welcome Back',
                     style: TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
