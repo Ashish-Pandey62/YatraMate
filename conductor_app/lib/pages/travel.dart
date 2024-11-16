@@ -365,9 +365,9 @@ Widget _buildNoActiveTour(BuildContext context) {
           child: Text(
             'No active tour',
             style: TextStyle(
-              fontSize: 14,
-              fontStyle: FontStyle.italic,
-              color: Colors.red,
+              fontSize: 16,
+              // fontStyle: FontStyle.italic,
+              color: Color.fromARGB(255, 171, 23, 13),
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -378,7 +378,9 @@ Widget _buildNoActiveTour(BuildContext context) {
           child: Text(
             'Create New Tour',
             style: TextStyle(
-              fontSize: 25,
+              fontSize: 24,
+              color: Color.fromARGB(255, 21, 8, 7),
+              fontWeight: FontWeight.bold,
             ),
           ),
       ),
@@ -435,12 +437,18 @@ Widget _buildNoActiveTour(BuildContext context) {
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             minimumSize: const Size(130, 60), 
-            textStyle: const TextStyle(fontSize: 19,),
+            textStyle: const TextStyle(fontSize: 18,),
             backgroundColor: const Color.fromARGB(255, 153, 109, 228), // Increases text size
-            foregroundColor: Colors.black, // Set text color to black
+            foregroundColor: const Color.fromARGB(255, 235, 230, 230), // Set text color to black
           ),
           onPressed: _createTour,
-          child: const Text('Start'),
+          child: const Text('Start',
+          style: TextStyle(
+          fontSize: 26,
+          fontWeight: FontWeight.bold,  // Bold text
+    color: Colors.white,    // Text color (optional)
+  ),
+          ),
         ),
         ),
     ],

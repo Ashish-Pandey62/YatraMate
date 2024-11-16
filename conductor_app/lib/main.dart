@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
       title: 'Yatra Mate',
       theme: ThemeData(
         primarySwatch: Colors.red,
-        // scaffoldBackgroundColor: Colors.lightBlue, // Set background color here
+        scaffoldBackgroundColor: Color.fromARGB(255, 255, 225, 255), // Set background color here
       ),
       initialRoute: isLoggedIn ? '/main_page' : '/login',
       routes: {

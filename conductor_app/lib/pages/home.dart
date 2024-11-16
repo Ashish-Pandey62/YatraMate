@@ -7,6 +7,8 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:conductor_app/utils/location.dart';
 import 'package:conductor_app/utils/utils.dart';
 
+
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -24,6 +26,7 @@ class _HomePageState extends State<HomePage> {
   List<Map<String, dynamic>> transactionHistory = [];
   String? user_type = 'traveler';
   final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -129,18 +132,33 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Yatra Mate'),
-        actions: [
+        title: const Text(
+        'Yatra Mate',
+        style: TextStyle(
+          fontSize: 30, // Adjust font size as needed
+          fontWeight: FontWeight.bold, // Optional: font styling
+          color: Colors.white, // Optional: adjust text color
+        ),
+      ),
+        backgroundColor: Color.fromARGB(255, 255, 225, 255),
+         actions: [
           IconButton(
-            icon: const Icon(Icons.logout),
+            icon: const Icon(Icons.logout,
+             color: Colors.white, // Set the icon color to white
+    size: 25, // Increase the icon size (adjust as needed)
+            ),
             onPressed: _logout,
             tooltip: 'Logout',
           ),
         ],
       ),
+            
+           
       body: !connection
           ? const Center(
-              child: Text("No Internet Connection"),
+              child: Text("No Internet Connection", 
+              style: TextStyle(color: Colors.red, fontSize: 18),
+              ),
             )
           : Padding(
               padding: const EdgeInsets.all(16.0),
@@ -148,6 +166,7 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const SizedBox(height: 20),
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -156,7 +175,7 @@ class _HomePageState extends State<HomePage> {
                           BoxShadow(
                             color: Colors.grey.withOpacity(0.5),
                             spreadRadius: 5,
-                            blurRadius: 7,
+                            blurRadius: 5,
                             offset: const Offset(0, 3),
                           ),
                         ],
@@ -171,6 +190,7 @@ class _HomePageState extends State<HomePage> {
                                 fontSize: 24, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 10),
+
                           Card(
                             color: Colors.blue[50],
                             child: Padding(
@@ -228,7 +248,7 @@ class _HomePageState extends State<HomePage> {
                               ElevatedButton(
                                 onPressed: () {},
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.green,
+                                  backgroundColor: const Color.fromRGBO(76, 175, 80, 1),
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 24, vertical: 12),
                                   textStyle: const TextStyle(
