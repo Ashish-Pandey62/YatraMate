@@ -61,9 +61,10 @@ class _TravelPageState extends State<TravelPage> {
     final newLocation = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MapAdjusterScreen(
-          initialPosition: LatLng(lat, lng),
-        ),
+        builder: (context) =>
+            MapAdjusterScreen(
+              initialPosition: LatLng(lat, lng),
+            ),
       ),
     );
 
@@ -71,20 +72,17 @@ class _TravelPageState extends State<TravelPage> {
       // Update the text field with the new coordinates
       controller.text = '${newLocation.latitude}, ${newLocation.longitude}';
     }
-    setState(() {
-      destinationController;
-      sourceController;
-    });
   }
 
   //remove battery optimization
   final _flutterIgnorebatteryoptimizationPlugin =
-      FlutterIgnorebatteryoptimization();
+  FlutterIgnorebatteryoptimization();
+
   Future<void> openIgnorebatteryoptimizationPlugin() async {
     String ignoreBatteryOptimization;
     try {
       ignoreBatteryOptimization = await _flutterIgnorebatteryoptimizationPlugin
-              .showIgnoreBatteryOptimizationSettings() ??
+          .showIgnoreBatteryOptimizationSettings() ??
           'Unknown ignoreBatteryOptimization';
     } on PlatformException {
       ignoreBatteryOptimization = 'Failed to show ignoreBatteryOptimization.';
@@ -97,18 +95,18 @@ class _TravelPageState extends State<TravelPage> {
     //print("isBatteryOptimizationDisabled: $isBatteryOptimizationDisabled");
     try {
       isBatteryOptimizationDisabled =
-          await _flutterIgnorebatteryoptimizationPlugin
-                      .isBatteryOptimizationDisabled() ==
-                  true
-              ? "Disabled"
-              : "Enabled";
+      await _flutterIgnorebatteryoptimizationPlugin
+          .isBatteryOptimizationDisabled() ==
+          true
+          ? "Disabled"
+          : "Enabled";
       print("isBatteryOptimizationDisabled: $isBatteryOptimizationDisabled");
 
       // Disabled ==> means you have set no restrictions
       // Enabled ==> means you have not set no restrictions
     } on PlatformException {
       isBatteryOptimizationDisabled =
-          'Failed to show ignoreBatteryOptimization.';
+      'Failed to show ignoreBatteryOptimization.';
     }
     if (!mounted) return;
   }
@@ -361,188 +359,201 @@ class _TravelPageState extends State<TravelPage> {
         padding: const EdgeInsets.only(bottom: 50.0),
         child: currentTour == null
             ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'No active tour.',
-                    style: TextStyle(
-                        fontSize: 24, color: Color.fromARGB(255, 0, 0, 0)),
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(top: 20.0),
+              child: Center(
+                child: Text(
+                  'No active tour.',
+                  style: TextStyle(
+                    fontSize: 24,
+                    color: Color.fromARGB(255, 0, 0, 0),
                   ),
-                  ElevatedButton(
-                    onPressed: () => _openMapAdjuster(sourceController),
-                    child: const Text('Select Source'),
-                  ),
-                  if (sourceController.text.isNotEmpty)
-                    Text('Source: ${sourceController.text}'),
-                  // ElevatedButton(
-                  //   onPressed: () => _openMapAdjuster(transit1Controller),
-                  //   child: const Text('Select Transit'),
-                  // ),
-                  // if (transit1Controller.text.isNotEmpty)
-                  //   Text('Source: ${transit1Controller.text}'),
-                  ElevatedButton(
-                    onPressed: () => {_openMapAdjuster(destinationController)},
-                    child: const Text('Select Destination'),
-                  ),
-                  if (destinationController.text.isNotEmpty)
-                    Text('Source: ${destinationController.text}'),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () async {
-                      print(destinationController.text);
-                      // final sourceData =
-                      //     await fetchLocationData(sourceController.text);
-                      // final destinationData =
-                      //     await fetchLocationData(destinationController.text);
-
-                      // // Extracting coordinates (or use other data based on your needs)
-                      // final sourceCoordinates =
-                      //     sourceData['features'][0]['geometry']['coordinates'];
-                      // final destinationCoordinates = destinationData['features']
-                      //     [0]['geometry']['coordinates'];
-                      // print(destinationCoordinates);
-                      // final response = await http.post(
-                      //   Uri.parse(tourCreateUrl),
-                      //   headers: {
-                      //     'Authorization': 'Token $token',
-                      //     'Content-Type': 'application/json',
-                      //   },
-                      //   body: jsonEncode({
-                      //     "source_lat":
-                      //         sourceCoordinates[1], // Pokhara latitude
-                      //     "source_lng":
-                      //         sourceCoordinates[0], // Pokhara longitude
-                      //     "destination_lat":
-                      //         destinationCoordinates[1], // Kathmandu latitude
-                      //     "destination_lng":
-                      //         destinationCoordinates[0] // Kathmandu longitude
-                      //   }),
-                      // );
-                      final response = await http.post(
-                        Uri.parse(tourCreateUrl),
-                        headers: {
-                          'Authorization': 'Token $token',
-                          'Content-Type': 'application/json',
-                        },
-                        body: jsonEncode({
-                          "source_lat": sourceController.text
-                              .split(',')[0], // Pokhara latitude
-                          "source_lng": sourceController.text
-                              .split(',')[1], // Pokhara longitude
-                          "destination_lat": destinationController.text
-                              .split(',')[0], // Kathmandu latitude
-                          "destination_lng": destinationController.text
-                              .split(',')[1], // Kathmandu longitude
-                        }),
-                      );
-
-                      if (response.statusCode != 200) {
-                        print(response.body);
-                      }
-
-                      // Logic to create a new tour
-                      setState(() {
-                        final data = jsonDecode(response.body);
-                        currentTour = (data['tour_data']);
-                      });
-
-                      locationService(context);
-                    },
-                    child: const Text('Create New Tour'),
-                  ),
-                ],
-              )
-            : Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      'Current Tour: ${currentTour!['id']}',
-                      style: const TextStyle(
-                          fontSize: 24, color: Color.fromARGB(255, 0, 0, 0)),
-                    ),
-                  ),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: currentTour!['transactions'].length,
-                      itemBuilder: (context, index) {
-                        final transaction = currentTour!['transactions'][index];
-                        return ListTile(
-                            title: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Username: ${transaction['traveler_name']}',
-                                  style: const TextStyle(
-                                      fontSize: 16,
-                                      color: Color.fromARGB(255, 0, 0, 0)),
-                                ),
-                                Text(
-                                  'Price: ${transaction['amount']}',
-                                  style: const TextStyle(
-                                      fontSize: 16,
-                                      color: Color.fromARGB(255, 0, 0, 0)),
-                                ),
-                              ],
-                            ),
-                            trailing: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  transaction['status'],
-                                  style: TextStyle(
-                                    color: transaction['status'] == 'Success' ||
-                                            transaction['status'] == 'Completed'
-                                        ? Colors.green
-                                        : transaction['status'] == 'Pending'
-                                            ? Colors.orange
-                                            : Colors.red,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                if (transaction['status'] == 'Failed')
-                                  Text(
-                                    transaction['error'],
-                                    style: const TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 6,
-                                    ),
-                                  ),
-                              ],
-                            ));
-                      },
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: _endTour,
-                    child: const Text('End Tour'),
-                  ),
-                ],
+                ),
               ),
+            ),
+            Center(
+              child: Container(
+                padding: const EdgeInsets.all(20.0),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => _openMapAdjuster(sourceController),
+                      child: const Text('Select Source'),
+                    ),
+                    if (sourceController.text.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text('Source: ${sourceController.text}'),
+                      ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () => _openMapAdjuster(transit1Controller),
+                      child: const Text('Select Transit'),
+                    ),
+                    if (transit1Controller.text.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text('Transit: ${transit1Controller.text}'),
+                      ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () => _openMapAdjuster(destinationController),
+                      child: const Text('Select Destination'),
+                    ),
+                    if (destinationController.text.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                            'Destination: ${destinationController.text}'),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20.0),
+              child: ElevatedButton(
+                onPressed: () async {
+                  print(destinationController.text);
+
+                  final response = await http.post(
+                    Uri.parse(tourCreateUrl),
+                    headers: {
+                      'Authorization': 'Token $token',
+                      'Content-Type': 'application/json',
+                    },
+                    body: jsonEncode({
+                      "source_lat": sourceController.text.split(',')[0],
+                      // Source latitude
+                      "source_lng": sourceController.text.split(',')[1],
+                      // Source longitude
+                      "destination_lat": destinationController.text.split(
+                          ',')[0],
+                      // Destination latitude
+                      "destination_lng": destinationController.text.split(
+                          ',')[1],
+                      // Destination longitude
+                    }),
+                  );
+
+                  if (response.statusCode != 200) {
+                    print(response.body);
+                  }
+
+                  setState(() {
+                    final data = jsonDecode(response.body);
+                    currentTour = (data['tour_data']);
+                  });
+
+                  locationService(context);
+                },
+                child: const Text('Create New Tour'),
+              ),
+            ),
+          ],
+        )
+            : Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                'Current Tour: ${currentTour!['id']}',
+                style: const TextStyle(
+                  fontSize: 24,
+                  color: Color.fromARGB(255, 0, 0, 0),
+                ),
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: currentTour!['transactions'].length,
+                itemBuilder: (context, index) {
+                  final transaction = currentTour!['transactions'][index];
+                  return ListTile(
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Username: ${transaction['traveler_name']}',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Color.fromARGB(255, 0, 0, 0),
+                          ),
+                        ),
+                        Text(
+                          'Price: ${transaction['amount']}',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Color.fromARGB(255, 0, 0, 0),
+                          ),
+                        ),
+                      ],
+                    ),
+                    trailing: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          transaction['status'],
+                          style: TextStyle(
+                            color: transaction['status'] == 'Success' ||
+                                transaction['status'] == 'Completed'
+                                ? Colors.green
+                                : transaction['status'] == 'Pending'
+                                ? Colors.orange
+                                : Colors.red,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        if (transaction['status'] == 'Failed')
+                          Text(
+                            transaction['error'],
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 6,
+                            ),
+                          ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+            ElevatedButton(
+              onPressed: _endTour,
+              child: const Text('End Tour'),
+            ),
+          ],
+        ),
       ),
-      // Floating Action Button to add a new transaction
       floatingActionButton: currentTour == null
           ? null
           : FloatingActionButton(
-              onPressed: () {
-                // Open QR code scanner when clicked
-                showDialog(
-                  context: context,
-                  builder: (context) => Dialog(
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 400,
-                      child: QRView(
-                        key: _qrKey,
-                        onQRViewCreated: _onQRViewCreated,
-                      ),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) =>
+                Dialog(
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 400,
+                    child: QRView(
+                      key: _qrKey,
+                      onQRViewCreated: _onQRViewCreated,
                     ),
                   ),
-                );
-              },
-              child: const Icon(Icons.qr_code_scanner),
-            ),
+                ),
+          );
+        },
+        child: const Icon(Icons.qr_code_scanner),
+      ),
     );
   }
 }
