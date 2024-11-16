@@ -143,9 +143,16 @@ Future<bool> onIosBackground(ServiceInstance service) async {
   return true;
 }
 
-void startBackgroundService() {
+void startBackgroundService() async {
   final service = FlutterBackgroundService();
-  service.startService();
+
+  bool isRunning = await service.isRunning(); // Check if service is running
+  if (!isRunning) {
+    await service.startService();
+    print('Service started.');
+  } else {
+    print('Service is already runninggggggggg.');
+  }
 }
 
 void stopBackgroundService() {
@@ -155,12 +162,19 @@ void stopBackgroundService() {
 
 @pragma('vm:entry-point')
 void onStart(ServiceInstance service) async {
+  service.on('stop').listen((event) {
+    service.stopSelf(); // Properly stops the background service
+    print("Background service has been stopped.");
+  });
+
   String baseUrl = "http://192.168.75.99:8000";
   String updateLocationUrl = '$baseUrl/api/update-location/';
   final prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('auth_token');
+  print("flutter service is running");
 
   Timer.periodic(const Duration(seconds: 3), (timer) async {
+    print("flutter service is running");
     try {
       Position position = await Geolocator.getCurrentPosition();
       final response = await http.post(

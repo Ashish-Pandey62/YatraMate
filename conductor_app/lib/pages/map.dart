@@ -196,8 +196,7 @@ class _MapPageState extends State<MapPage>
               ),
               children: [
                 TileLayer(
-                  urlTemplate:
-                      'https://api.maptiler.com/maps/bright/{z}/{x}/{y}.png?key=ouwqfQklzvtVUJLrsxI6',
+                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                   userAgentPackageName: 'com.example.app',
                 ),
                 Positioned(

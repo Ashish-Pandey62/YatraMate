@@ -63,19 +63,12 @@ class _MainPageState extends State<MainPage>
       bottomNavigationBar: CurvedNavigationBar(
         backgroundColor: Colors.transparent,
         color: const Color.fromARGB(255, 153, 112, 225),
-        items:[
-        Icon(FontAwesomeIcons.house,
-        color: Colors.white),
-
-        Icon(FontAwesomeIcons.bus,
-        color: Colors.white
-        ),
-
-        Icon(FontAwesomeIcons.map,
-        color: Colors.white),
-
-      ],
-      index: _currentIndex,
+        items: [
+          Icon(FontAwesomeIcons.house, color: Colors.white),
+          Icon(FontAwesomeIcons.bus, color: Colors.white),
+          Icon(FontAwesomeIcons.map, color: Colors.white),
+        ],
+        index: _currentIndex,
         onTap: (index) {
           setState(() {
             _currentIndex = index; // Update index to change the page

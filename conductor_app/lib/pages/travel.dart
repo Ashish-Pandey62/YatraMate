@@ -128,7 +128,6 @@ class _TravelPageState extends State<TravelPage> {
   }
 
   Future<void> _initializeVariables() async {
-    startBackgroundService();
     baseUrl = dotenv.env['SITE_URL'] ?? '';
     qrValidateUrl = '$baseUrl/api/validate-qr/';
     tourCreateUrl = '$baseUrl/api/activate-tour/';
@@ -157,6 +156,7 @@ class _TravelPageState extends State<TravelPage> {
           currentTour = null;
         });
       }
+      startBackgroundService();
     } else {
       print('Error fetching active tour: ${response.body}');
     }
@@ -281,9 +281,9 @@ class _TravelPageState extends State<TravelPage> {
         bool hasPermission = await checker.checkScheduleExactAlarmPermission();
         if (!hasPermission) {
           PermissionHelper.requestScheduleExactAlarmPermission();
+          print("Alarm permission requested");
         }
       }
-
       // Start the background service
       startBackgroundService();
     }
@@ -443,26 +443,27 @@ class _TravelPageState extends State<TravelPage> {
           child:
               // TextField to input bus number
               TextField(
-              controller: busNumberController,
-              decoration: InputDecoration(
-                labelText: ' Enter Bus Number',
-                labelStyle: TextStyle(fontSize: 18),
-                filled: true,
-                fillColor: busNumberController.text.isNotEmpty
-                    ? Colors.grey[300]
-                    : Colors.grey[50],
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                    color: Colors.grey, // Border color
-                    width: 1, // Border width
-                  ),
+            controller: busNumberController,
+            decoration: InputDecoration(
+              labelText: ' Enter Bus Number',
+              labelStyle: TextStyle(fontSize: 18),
+              filled: true,
+              fillColor: busNumberController.text.isNotEmpty
+                  ? Colors.grey[300]
+                  : Colors.grey[50],
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: Colors.grey, // Border color
+                  width: 1, // Border width
                 ),
-                contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 20), // Controls padding inside the text field
               ),
-              style: TextStyle(fontSize: 18), // Increases text size
+              contentPadding: EdgeInsets.symmetric(
+                  vertical: 15,
+                  horizontal: 20), // Controls padding inside the text field
             ),
-
+            style: TextStyle(fontSize: 18), // Increases text size
+          ),
         ),
         Padding(
           padding: const EdgeInsets.only(top: 20.0),
@@ -474,16 +475,18 @@ class _TravelPageState extends State<TravelPage> {
               ),
               backgroundColor: const Color.fromARGB(
                   255, 153, 109, 228), // Increases text size
-              foregroundColor: const Color.fromARGB(255, 235, 230, 230), // Set text color to black
+              foregroundColor: const Color.fromARGB(
+                  255, 235, 230, 230), // Set text color to black
             ),
             onPressed: _createTour,
-            child: const Text('Start',
-          style: TextStyle(
-          fontSize: 26,
-          fontWeight: FontWeight.bold,  // Bold text
-    color: Colors.white,    // Text color (optional)
-  ),
-          ),
+            child: const Text(
+              'Start',
+              style: TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.bold, // Bold text
+                color: Colors.white, // Text color (optional)
+              ),
+            ),
           ),
         ),
       ],
@@ -575,7 +578,7 @@ class _TravelPageState extends State<TravelPage> {
   }
 
   void _createTour() async {
-    print(destinationController.text);
+    // print(destinationController.text);
 
     final response = await http.post(
       Uri.parse(tourCreateUrl),

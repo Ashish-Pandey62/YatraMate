@@ -7,8 +7,6 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:conductor_app/utils/location.dart';
 import 'package:conductor_app/utils/utils.dart';
 
-
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -41,6 +39,7 @@ class _HomePageState extends State<HomePage> {
     _fetchData();
     _checkInternetConnection();
   }
+
   // Function to handle logout and navigate to login page
   Future<void> _logout() async {
     final prefs = await SharedPreferences.getInstance();
@@ -49,6 +48,7 @@ class _HomePageState extends State<HomePage> {
     await prefs.setString('username', ''); // Clear username
     await deletePrivateKey(); // Delete private key
     stopBackgroundService(); // Stop background service
+
     Navigator.of(context).pushReplacementNamed('/login');
   }
 
@@ -133,31 +133,31 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-        'Yatra Mate',
-        style: TextStyle(
-          fontSize: 30, // Adjust font size as needed
-          fontWeight: FontWeight.bold, // Optional: font styling
-          color: Colors.black, // Optional: adjust text color
+          'Yatra Mate',
+          style: TextStyle(
+            fontSize: 30, // Adjust font size as needed
+            fontWeight: FontWeight.bold, // Optional: font styling
+            color: Colors.black, // Optional: adjust text color
+          ),
         ),
-      ),
         backgroundColor: Color.fromARGB(255, 255, 225, 255),
-         actions: [
+        actions: [
           IconButton(
-            icon: const Icon(Icons.logout,
-             color: Colors.black, // Set the icon color to white
-    size: 25, // Increase the icon size (adjust as needed)
+            icon: const Icon(
+              Icons.logout,
+              color: Colors.black, // Set the icon color to white
+              size: 25, // Increase the icon size (adjust as needed)
             ),
             onPressed: _logout,
             tooltip: 'Logout',
           ),
         ],
       ),
-            
-           
       body: !connection
           ? const Center(
-              child: Text("No Internet Connection", 
-              style: TextStyle(color: Colors.red, fontSize: 18),
+              child: Text(
+                "No Internet Connection",
+                style: TextStyle(color: Colors.red, fontSize: 18),
               ),
             )
           : Padding(
@@ -190,7 +190,6 @@ class _HomePageState extends State<HomePage> {
                                 fontSize: 24, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 10),
-
                           Card(
                             color: Colors.blue[50],
                             child: Padding(
@@ -248,7 +247,8 @@ class _HomePageState extends State<HomePage> {
                               ElevatedButton(
                                 onPressed: () {},
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color.fromRGBO(76, 175, 80, 1),
+                                  backgroundColor:
+                                      const Color.fromRGBO(76, 175, 80, 1),
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 24, vertical: 12),
                                   textStyle: const TextStyle(
