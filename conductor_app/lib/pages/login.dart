@@ -17,7 +17,7 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
 
   bool _isLoading = false;
-   bool _obscurePassword = true; // State variable to toggle password visibility
+  bool _obscurePassword = true; // State variable to toggle password visibility
 
   Future<void> _logout() async {
     final prefs = await SharedPreferences.getInstance();
@@ -87,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
           fontSize: 16,
         ),
       ),
-      backgroundColor: isSuccess ? Colors.blue : Colors.red,
+      backgroundColor: isSuccess ? const Color.fromARGB(255, 13, 161, 21) : Colors.red,
       duration: const Duration(seconds: 3),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
@@ -109,7 +109,8 @@ class _LoginPageState extends State<LoginPage> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: Colors.white, // Set background color
+        backgroundColor:
+            const Color.fromARGB(255, 235, 195, 244), // Set background color
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(32.0),
@@ -121,15 +122,15 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   // Displaying the logo image
                   Image.asset(
-                    'assets/logo.png',
-                    width: 100,
-                    height: 100,
+                    'assets/trans.png',
+                    width: 170,
+                    height: 170,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
 
                   // "Welcome Back" text
                   const Text(
-                    'Welcome back',
+                    'Welcome Back',
                     style: TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
@@ -179,16 +180,18 @@ class _LoginPageState extends State<LoginPage> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
-                       suffixIcon: IconButton(
-          icon: Icon(
-            _obscurePassword ? Icons.visibility_off : Icons.visibility,
-          ),
-          onPressed: () {
-            setState(() {
-              _obscurePassword = !_obscurePassword;
-            });
-          },
-                       ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                      ),
                     ),
                   ),
                   const SizedBox(height: 18),
@@ -200,7 +203,7 @@ class _LoginPageState extends State<LoginPage> {
                           onPressed: _login,
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
-                                const Color.fromRGBO(33, 150, 243, 1),
+                                const Color.fromARGB(255, 67, 56, 120),
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 50, vertical: 15),
                             shape: RoundedRectangleBorder(
@@ -213,7 +216,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                   const SizedBox(height: 10),
-                  // Conditionally hide "Not Registered" or "Register Now" when keyboard is visible
+                  // Conditionally hide "Not Registered !" or "Register Now" when keyboard is visible
                   if (!isKeyboardVisible)
                     Column(
                       children: [
@@ -224,7 +227,8 @@ class _LoginPageState extends State<LoginPage> {
                           child: const Text(
                             'Not registered? Register now',
                             style: TextStyle(
-                                color: Color.fromRGBO(33, 150, 243, 1)),
+                              color: Color.fromARGB(255, 67, 56, 120),
+                            ),
                           ),
                         ),
                       ],
