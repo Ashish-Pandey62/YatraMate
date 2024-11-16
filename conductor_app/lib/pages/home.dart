@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:conductor_app/utils/location.dart';
+import 'package:conductor_app/utils/utils.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -35,6 +37,16 @@ class _HomePageState extends State<HomePage> {
     });
     _fetchData();
     _checkInternetConnection();
+  }
+  // Function to handle logout and navigate to login page
+  Future<void> _logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', false); // Set login status to false
+    await prefs.setString('auth_token', ''); // Clear auth token
+    await prefs.setString('username', ''); // Clear username
+    await deletePrivateKey(); // Delete private key
+    stopBackgroundService(); // Stop background service
+    Navigator.of(context).pushReplacementNamed('/login');
   }
 
   Future<void> _checkInternetConnection() async {
@@ -116,6 +128,16 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Yatra Mate'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: _logout,
+            tooltip: 'Logout',
+          ),
+        ],
+      ),
       body: !connection
           ? const Center(
               child: Text("No Internet Connection"),

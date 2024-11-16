@@ -17,11 +17,8 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin {
-  int myIndex = 0; // Default page index
+  int _currentIndex = 0; // Default page index
   String userRole = 'traveller'; // Default role
-  late AnimationController _animationController;
-  late Animation<double> _bounceAnimation;
-
 
   @override
   void initState() {
@@ -30,8 +27,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   }
 
   Future<void> _loadUserRole() async {
-    myIndex =1;
-    initializeService(); // Initialize background service
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       userRole = prefs.getString('user_type') ?? 'traveller'; // Load user role
@@ -41,94 +36,52 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   List<Widget> getPages() {
     return [
       
-      userRole == 'conductor' ? const TravelPage() : const PaymentPage(),
-       const HomePage(),
-      const MapPage(),
+     const HomePage(), // Index 0: Home Page
+      userRole == 'conductor' ? const TravelPage() : const PaymentPage(), // Index 1: Travel/Payment based on role
+      const MapPage(), // Index 2: Map Page
     ];
   }
 
-  // Function to handle logout and navigate to login page
-  Future<void> _logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLoggedIn', false); // Set login status to false
-    await prefs.setString('auth_token', ''); // Clear auth token
-    await prefs.setString('username', ''); // Clear username
-    await deletePrivateKey(); // Delete private key
-    stopBackgroundService(); // Stop background service
-    Navigator.of(context).pushReplacementNamed('/login');
-  }
+  
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Yatra Mate'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: _logout,
-            tooltip: 'Logout',
-          ),
-        ],
-      ),
+      // appBar: AppBar(
+      //   title: const Text('Yatra Mate'),
+      //   actions: [
+      //     IconButton(
+      //       icon: const Icon(Icons.logout),
+      //       onPressed: _logout,
+      //       tooltip: 'Logout',
+      //     ),
+      //   ],
+      // ),
 
-      body: SingleChildScrollView(
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height - kToolbarHeight - kBottomNavigationBarHeight,
-          child: getWidgetList()[myIndex],
+      body: getPages()[_currentIndex], // Render content based on the selected index
+      bottomNavigationBar: CurvedNavigationBar(
+        backgroundColor: Colors.transparent,
+        color: const Color.fromARGB(255, 153, 109, 228),
+        items:[
+        Icon(FontAwesomeIcons.house,
+        color: Colors.white),
+
+        Icon(FontAwesomeIcons.bus,
+        color: Colors.white
         ),
-      ),
-      
-      bottomNavigationBar: BottomNavigationBar(
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
+
+        Icon(FontAwesomeIcons.map,
+        color: Colors.white),
+
+      ],
+      index: _currentIndex,
         onTap: (index) {
-          if (index != myIndex) {
-            setState(() {
-              myIndex = index;
-            });
-            _animationController
-                ..reset()
-                ..forward(); // Trigger the bounce effect
-            }
+          setState(() {
+            _currentIndex = index; // Update index to change the page
+          });
         },
-        currentIndex: myIndex,
-        items: [
-          BottomNavigationBarItem(
-            icon: AnimatedBuilder(
-              animation: _bounceAnimation,
-              builder: (context, child) => Transform.scale(
-                scale: myIndex == 0 ? _bounceAnimation.value : 1.0,
-                child: const Icon(FontAwesomeIcons.bus),
-              ),
-            ),
-            label: 'Travel',
-          ),
-          BottomNavigationBarItem(
-            icon: AnimatedBuilder(
-              animation: _bounceAnimation,
-              builder: (context, child) => Transform.scale(
-                scale: myIndex == 1 ? _bounceAnimation.value : 1.0,
-                child: const Icon(FontAwesomeIcons.house),
-              ),
-            ),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: AnimatedBuilder(
-              animation: _bounceAnimation,
-              builder: (context, child) => Transform.scale(
-                scale: myIndex == 2 ? _bounceAnimation.value : 1.0,
-                child: const Icon(FontAwesomeIcons.map),
-              ),
-            ),
-            label: 'Map',
-          ),
-        ],
-      ),
+        ),
     );
   }
 }
         
-
-
