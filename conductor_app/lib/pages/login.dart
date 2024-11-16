@@ -87,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
           fontSize: 16,
         ),
       ),
-      backgroundColor: isSuccess ? Colors.blue : Colors.red,
+      backgroundColor: isSuccess ? const Color.fromARGB(255, 13, 161, 21) : Colors.red,
       duration: const Duration(seconds: 3),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
@@ -130,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
 
                   // "Welcome Back" text
                   const Text(
-                    'Welcome back',
+                    'Welcome Back',
                     style: TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
@@ -216,7 +216,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                   const SizedBox(height: 10),
-                  // Conditionally hide "Not Registered" or "Register Now" when keyboard is visible
+                  // Conditionally hide "Not Registered !" or "Register Now" when keyboard is visible
                   if (!isKeyboardVisible)
                     Column(
                       children: [

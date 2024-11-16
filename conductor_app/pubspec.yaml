@@ -32,6 +32,7 @@ dependencies:
   qr_flutter: ^4.1.0
   flutter:
     sdk: flutter
+  curved_navigation_bar: ^1.0.6 #latest version
   
 
 

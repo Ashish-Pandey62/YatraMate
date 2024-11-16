@@ -28,7 +28,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Yatra Mate',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.red,
+        // scaffoldBackgroundColor: Colors.lightBlue, // Set background color here
       ),
       initialRoute: isLoggedIn ? '/main_page' : '/login',
       routes: {
