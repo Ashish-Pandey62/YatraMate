@@ -280,16 +280,16 @@ class _HomePageState extends State<HomePage> {
                                   ? Icons.circle
                                   : transaction['title'] == 'pending'
                                       ? Icons.circle
-                                      : transaction['amount'] > 0
-                                          ? Icons.arrow_downward
-                                          : Icons.arrow_upward,
+                                      : user_type == 'traveler'
+                                          ? Icons.arrow_upward
+                                          : Icons.arrow_downward,
                               color: transaction['title'] == 'failed'
                                   ? Colors.red
                                   : transaction['title'] == 'pending'
                                       ? Colors.yellow
-                                      : transaction['amount'] > 0
-                                          ? Colors.green
-                                          : Colors.red,
+                                      : user_type == 'traveler'
+                                          ? Colors.blue
+                                          : Colors.green,
                             ),
                             title: Text(
                               user_type == 'traveler'
@@ -302,9 +302,9 @@ class _HomePageState extends State<HomePage> {
                             trailing: Text(
                               "${transaction['amount'] > 0 ? '+' : ''}Rs${transaction['amount'].abs().toStringAsFixed(2)}",
                               style: TextStyle(
-                                color: transaction['amount'] > 0
-                                    ? Colors.green
-                                    : Colors.red,
+                                color: user_type == 'traveler'
+                                    ? Colors.blue
+                                    : Colors.green,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
