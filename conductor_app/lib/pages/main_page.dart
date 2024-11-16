@@ -64,7 +64,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
         color: const Color.fromARGB(255, 153, 109, 228),
         items:[
         Icon(FontAwesomeIcons.house,
-        color: Colors.white),
+        color: Colors.grey),
 
         Icon(FontAwesomeIcons.bus,
         color: Colors.white
