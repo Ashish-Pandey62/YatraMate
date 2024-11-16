@@ -111,7 +111,7 @@ class _LoginPageState extends State<LoginPage> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         backgroundColor:
-            const Color.fromARGB(255, 235, 195, 244), // Set background color
+            const Color.fromARGB(255, 224, 162, 239), // Set background color
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(32.0),
@@ -135,7 +135,8 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color:const Color.fromARGB(255, 50, 50, 50)
+,
                     ),
                   ),
                   const SizedBox(height: 8),
