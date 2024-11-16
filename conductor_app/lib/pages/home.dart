@@ -137,7 +137,7 @@ class _HomePageState extends State<HomePage> {
         style: TextStyle(
           fontSize: 30, // Adjust font size as needed
           fontWeight: FontWeight.bold, // Optional: font styling
-          color: Colors.white, // Optional: adjust text color
+          color: Colors.black, // Optional: adjust text color
         ),
       ),
         backgroundColor: Color.fromARGB(255, 255, 225, 255),
