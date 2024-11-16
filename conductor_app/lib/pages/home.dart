@@ -137,14 +137,14 @@ class _HomePageState extends State<HomePage> {
         style: TextStyle(
           fontSize: 30, // Adjust font size as needed
           fontWeight: FontWeight.bold, // Optional: font styling
-          color: Colors.white, // Optional: adjust text color
+          color: Colors.black, // Optional: adjust text color
         ),
       ),
         backgroundColor: Color.fromARGB(255, 255, 225, 255),
          actions: [
           IconButton(
             icon: const Icon(Icons.logout,
-             color: Colors.white, // Set the icon color to white
+             color: Colors.black, // Set the icon color to white
     size: 25, // Increase the icon size (adjust as needed)
             ),
             onPressed: _logout,

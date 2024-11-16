@@ -88,7 +88,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
       backgroundColor:
-          isSuccess ? const Color.fromRGBO(76, 175, 80, 1): Colors.red,
+          isSuccess ? Colors.green : Colors.red,
       duration: const Duration(seconds: 3),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
