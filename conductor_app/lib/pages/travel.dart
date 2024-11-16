@@ -371,10 +371,18 @@ class _TravelPageState extends State<TravelPage> {
                     fontStyle: FontStyle.italic,
                     color: Colors.red, // Alert or warning style
                     fontWeight: FontWeight.bold,
+                    shadows: [
+                      Shadow(
+                        offset: Offset(1.0, 1.0), // Position of the shadow
+                        blurRadius: 4.0, // Blurriness of the shadow
+                        color: Color.fromARGB(128, 0, 0, 0), // Shadow color
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
+
 
             Center(
               child: Container(
