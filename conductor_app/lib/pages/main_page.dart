@@ -61,7 +61,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
       body: getPages()[_currentIndex], // Render content based on the selected index
       bottomNavigationBar: CurvedNavigationBar(
         backgroundColor: Colors.transparent,
-        color: const Color.fromARGB(255, 153, 109, 228),
+        color: const Color.fromARGB(255, 153, 112, 225),
         items:[
         Icon(FontAwesomeIcons.house,
         color: Colors.white),
