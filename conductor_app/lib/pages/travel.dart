@@ -34,15 +34,32 @@ class _TravelPageState extends State<TravelPage> {
   late String? token;
   late String? userType;
   late String activeTourUrl;
+  TextEditingController sourceController = TextEditingController();
+  TextEditingController destinationController = TextEditingController();
+
+  Future<Map<String, dynamic>> fetchLocationData(String query) async {
+    final apiKey =
+        '5b3ce3597851110001cf6248966817b9279641689b1420ce56329a55'; // Replace with your API key
+    final url = Uri.parse(
+        'https://api.openrouteservice.org/geocode/search?api_key=$apiKey&text=$query');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return data;
+    } else {
+      throw Exception('Failed to load location data');
+    }
+  }
 
   //remove battery optimization
   final _flutterIgnorebatteryoptimizationPlugin =
-      FlutterIgnorebatteryoptimization();
+  FlutterIgnorebatteryoptimization();
   Future<void> openIgnorebatteryoptimizationPlugin() async {
     String ignoreBatteryOptimization;
     try {
       ignoreBatteryOptimization = await _flutterIgnorebatteryoptimizationPlugin
-              .showIgnoreBatteryOptimizationSettings() ??
+          .showIgnoreBatteryOptimizationSettings() ??
           'Unknown ignoreBatteryOptimization';
     } on PlatformException {
       ignoreBatteryOptimization = 'Failed to show ignoreBatteryOptimization.';
@@ -55,18 +72,18 @@ class _TravelPageState extends State<TravelPage> {
     //print("isBatteryOptimizationDisabled: $isBatteryOptimizationDisabled");
     try {
       isBatteryOptimizationDisabled =
-          await _flutterIgnorebatteryoptimizationPlugin
-                      .isBatteryOptimizationDisabled() ==
-                  true
-              ? "Disabled"
-              : "Enabled";
+      await _flutterIgnorebatteryoptimizationPlugin
+          .isBatteryOptimizationDisabled() ==
+          true
+          ? "Disabled"
+          : "Enabled";
       print("isBatteryOptimizationDisabled: $isBatteryOptimizationDisabled");
 
       // Disabled ==> means you have set no restrictions
       // Enabled ==> means you have not set no restrictions
     } on PlatformException {
       isBatteryOptimizationDisabled =
-          'Failed to show ignoreBatteryOptimization.';
+      'Failed to show ignoreBatteryOptimization.';
     }
     if (!mounted) return;
   }
@@ -314,143 +331,164 @@ class _TravelPageState extends State<TravelPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
-        body: Padding(
-          padding: const EdgeInsets.only(bottom: 50.0),
-          child: currentTour == null
-              ? Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                'No active tour.',
-                style: TextStyle(
+      backgroundColor: Colors.white,
+      body: Padding(
+        padding: const EdgeInsets.only(bottom: 50.0),
+        child: currentTour == null
+            ? Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'No active tour.',
+              style: TextStyle(
+                  fontSize: 24, color: Color.fromARGB(255, 0, 0, 0)),
+            ),
+            TextField(
+              controller: sourceController,
+              decoration: InputDecoration(labelText: 'Source'),
+            ),
+            TextField(
+              controller: destinationController,
+              decoration: InputDecoration(labelText: 'Destination'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () async {
+                final sourceData =
+                await fetchLocationData(sourceController.text);
+                final destinationData =
+                await fetchLocationData(destinationController.text);
+
+                // Extracting coordinates (or use other data based on your needs)
+                final sourceCoordinates =
+                sourceData['features'][0]['geometry']['coordinates'];
+                final destinationCoordinates = destinationData['features']
+                [0]['geometry']['coordinates'];
+                // print(destinationCoordinates);
+                final response = await http.post(
+                  Uri.parse(tourCreateUrl),
+                  headers: {
+                    'Authorization': 'Token $token',
+                    'Content-Type': 'application/json',
+                  },
+                  body: jsonEncode({
+                    "source_lat":
+                    sourceCoordinates[1], // Pokhara latitude
+                    "source_lng":
+                    sourceCoordinates[0], // Pokhara longitude
+                    "destination_lat":
+                    destinationCoordinates[1], // Kathmandu latitude
+                    "destination_lng":
+                    destinationCoordinates[0] // Kathmandu longitude
+                  }),
+                );
+                if (response.statusCode != 200) {
+                  print(response.body);
+                }
+
+                // Logic to create a new tour
+                setState(() {
+                  final data = jsonDecode(response.body);
+                  currentTour = (data['tour_data']);
+                });
+
+                locationService(context);
+              },
+              child: const Text('Create New Tour'),
+            ),
+          ],
+        )
+            : Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                'Current Tour: ${currentTour!['id']}',
+                style: const TextStyle(
                     fontSize: 24, color: Color.fromARGB(255, 0, 0, 0)),
               ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () async {
-                  final response = await http.post(
-                    Uri.parse(tourCreateUrl),
-                    headers: {
-                      'Authorization': 'Token $token',
-                      'Content-Type': 'application/json',
-                    },
-                    body: jsonEncode({
-                      "source_lat": 28.176469,
-                      "source_lng": 83.008057,
-                      "destination_lat": 27.704060,
-                      "destination_lng": 85.102493
-                    }),
-                  );
-                  if (response.statusCode != 200) {
-                    print(response.body);
-                  }
-
-                  // Logic to create a new tour
-                  setState(() {
-                    final data = jsonDecode(response.body);
-                    currentTour = (data['tour_data']);
-                  });
-
-                  locationService(context);
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: currentTour!['transactions'].length,
+                itemBuilder: (context, index) {
+                  final transaction = currentTour!['transactions'][index];
+                  return ListTile(
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Username: ${transaction['traveler_name']}',
+                            style: const TextStyle(
+                                fontSize: 16,
+                                color: Color.fromARGB(255, 0, 0, 0)),
+                          ),
+                          Text(
+                            'Price: ${transaction['amount']}',
+                            style: const TextStyle(
+                                fontSize: 16,
+                                color: Color.fromARGB(255, 0, 0, 0)),
+                          ),
+                        ],
+                      ),
+                      trailing: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            transaction['status'],
+                            style: TextStyle(
+                              color: transaction['status'] == 'Success' ||
+                                  transaction['status'] == 'Completed'
+                                  ? Colors.green
+                                  : transaction['status'] == 'Pending'
+                                  ? Colors.orange
+                                  : Colors.red,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          if (transaction['status'] == 'Failed')
+                            Text(
+                              transaction['error'],
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 6,
+                              ),
+                            ),
+                        ],
+                      ));
                 },
-                child: const Text('Create New Tour'),
               ),
-            ],
-          )
-              : Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  'Current Tour: ${currentTour!['id']}',
-                  style: const TextStyle(
-                      fontSize: 24, color: Color.fromARGB(255, 0, 0, 0)),
-                ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: currentTour!['transactions'].length,
-                  itemBuilder: (context, index) {
-                    final transaction = currentTour!['transactions'][index];
-                    return ListTile(
-                        title: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Username: ${transaction['traveler_name']}',
-                              style: const TextStyle(
-                                  fontSize: 16,
-                                  color: Color.fromARGB(255, 0, 0, 0)),
-                            ),
-                            Text(
-                              'Price: ${transaction['amount']}',
-                              style: const TextStyle(
-                                  fontSize: 16,
-                                  color: Color.fromARGB(255, 0, 0, 0)),
-                            ),
-                          ],
-                        ),
-                        trailing: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              transaction['status'],
-                              style: TextStyle(
-                                color: transaction['status'] == 'Success' ||
-                                    transaction['status'] == 'Completed'
-                                    ? Colors.green
-                                    : transaction['status'] == 'Pending'
-                                    ? Colors.orange
-                                    : Colors.red,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            if (transaction['status'] == 'Failed')
-                              Text(
-                                transaction['error'],
-                                style: const TextStyle(
-                                  color: Colors.red,
-                                  fontSize: 6,
-                                ),
-                              ),
-                          ],
-                        ));
-                  },
-                ),
-              ),
-              ElevatedButton(
-                onPressed: _endTour,
-                child: const Text('End Tour'),
-              ),
-            ],
-          ),
+            ),
+            ElevatedButton(
+              onPressed: _endTour,
+              child: const Text('End Tour'),
+            ),
+          ],
         ),
-        //Floating Action Button to add a new transaction
+      ),
+      // Floating Action Button to add a new transaction
       floatingActionButton: currentTour == null
           ? null
-        : Padding(
-    padding: const EdgeInsets.only(bottom: 20.0), // Adjust padding as needed
-    child: FloatingActionButton(
-    onPressed: () {
-                // Open QR code scanner when clicked
-                showDialog(
-                  context: context,
-                  builder: (context) => Dialog(
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 400,
-                      child: QRView(
-                        key: _qrKey,
-                        onQRViewCreated: _onQRViewCreated,
-                      ),
-                    ),
-                  ),
-                );
-              },
-              child: const Icon(Icons.qr_code_scanner),
+          : FloatingActionButton(
+        onPressed: () {
+          // Open QR code scanner when clicked
+          showDialog(
+            context: context,
+            builder: (context) => Dialog(
+              child: SizedBox(
+                width: double.infinity,
+                height: 400,
+                child: QRView(
+                  key: _qrKey,
+                  onQRViewCreated: _onQRViewCreated,
+                ),
+              ),
             ),
+          );
+        },
+        child: const Icon(Icons.qr_code_scanner),
+      ),
     );
   }
 }
