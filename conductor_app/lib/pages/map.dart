@@ -182,8 +182,20 @@ class _MapPageState extends State<MapPage>
               ),
               children: [
                 TileLayer(
-                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  urlTemplate:
+                      'https://api.maptiler.com/maps/bright/{z}/{x}/{y}.png?key=ouwqfQklzvtVUJLrsxI6',
                   userAgentPackageName: 'com.example.app',
+                ),
+                Positioned(
+                  top: 10,
+                  right: 10,
+                  child: FloatingActionButton(
+                    onPressed: () {
+                      _getCurrentLocation();
+                      // mapController.rotate(0);
+                    },
+                    child: Icon(Icons.navigation),
+                  ),
                 ),
                 MarkerLayer(markers: [
                   for (int i = 0; i < (tours?.length ?? 0); i++)
