@@ -213,7 +213,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                   const SizedBox(height: 10),
-                  // Conditionally hide "Not Registered" or "Register Now" when keyboard is visible
+                  // Conditionally hide "Not Registered !" or "Register Now" when keyboard is visible
                   if (!isKeyboardVisible)
                     Column(
                       children: [
