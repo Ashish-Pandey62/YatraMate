@@ -401,3 +401,75 @@ def set_tour_coordinates(request, tour_id):
     
     except Exception as e:
         return Response({"status": "failed", "message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    
+
+#  for traffic flow using tomtom api 
+import requests
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+TOMTOM_API_KEY = 'kggGzqGfriHEcd9tiXaLL97KG7fi8niP'
+
+@csrf_exempt
+def traffic_flow(request):
+    if request.method == 'POST':
+        try:
+            active_tour = Tour.objects.filter(is_active=True).first()
+            if not active_tour:
+                return JsonResponse({"status": "error", "message": "No active tour found."}, status=404)
+
+            source = {
+                "latitude": float(active_tour.source_lat),
+                "longitude": float(active_tour.source_lng),
+            }
+            destination = {
+                "latitude": float(active_tour.destination_lat),
+                "longitude": float(active_tour.destination_lng),
+            }
+
+            tomtom_url = f"https://api.tomtom.com/traffic/services/4/flowSegmentData/absolute/10/json"
+            params = {
+                "key": TOMTOM_API_KEY,
+                "point": f"{source['latitude']},{source['longitude']}"
+            }
+            response = requests.get(tomtom_url, params=params)
+            if response.status_code != 200:
+                return JsonResponse({"status": "error", "message": "Failed to fetch traffic data."}, status=500)
+
+            traffic_data = response.json()
+
+            segments = []
+            for segment in traffic_data.get("flowSegments", []):
+                current_speed = segment.get("currentSpeed", 0)
+                free_flow_speed = segment.get("freeFlowSpeed", 1)  
+                congestion_index = current_speed / free_flow_speed
+
+                if congestion_index < 0.7:
+                    congestion = "high"
+                elif congestion_index < 0.9:
+                    congestion = "moderate"
+                else:
+                    congestion = "low"
+
+                segments.append({
+                    "polyline": segment.get("coordinates"),  
+                    "congestion": congestion
+                })
+
+            return JsonResponse({
+                "status": "success",
+                "tour": {
+                    "veh_num": active_tour.veh_num,
+                    "conductor": active_tour.conductor.username if active_tour.conductor else "Unknown",
+                    "source": source,
+                    "destination": destination,
+                },
+                "traffic": segments
+            })
+
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+    return JsonResponse({"status": "error", "message": "Invalid request method."}, status=405)

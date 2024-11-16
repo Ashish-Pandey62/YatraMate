@@ -46,7 +46,6 @@ class CustomUser(AbstractUser):
 
 
 
-#  Tour  Model would be implemented later 
 class Tour(models.Model):
     is_active = models.BooleanField(default=False)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, default=27)
