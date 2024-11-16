@@ -125,7 +125,7 @@ class _MapAdjusterScreenState extends State<MapAdjusterScreen> {
                     print('Location data: $latitude, $longitude');
                     setState(() {
                       _selectedPosition = LatLng(latitude, longitude);
-                      _mapController.move(_selectedPosition, 10);
+                      _mapController.move(_selectedPosition, 14);
                     });
                   },
                   child: const Text('Search'),

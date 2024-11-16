@@ -71,16 +71,20 @@ class _TravelPageState extends State<TravelPage> {
       // Update the text field with the new coordinates
       controller.text = '${newLocation.latitude}, ${newLocation.longitude}';
     }
+    setState(() {
+      destinationController;
+      sourceController;
+    });
   }
 
   //remove battery optimization
   final _flutterIgnorebatteryoptimizationPlugin =
-  FlutterIgnorebatteryoptimization();
+      FlutterIgnorebatteryoptimization();
   Future<void> openIgnorebatteryoptimizationPlugin() async {
     String ignoreBatteryOptimization;
     try {
       ignoreBatteryOptimization = await _flutterIgnorebatteryoptimizationPlugin
-          .showIgnoreBatteryOptimizationSettings() ??
+              .showIgnoreBatteryOptimizationSettings() ??
           'Unknown ignoreBatteryOptimization';
     } on PlatformException {
       ignoreBatteryOptimization = 'Failed to show ignoreBatteryOptimization.';
@@ -93,18 +97,18 @@ class _TravelPageState extends State<TravelPage> {
     //print("isBatteryOptimizationDisabled: $isBatteryOptimizationDisabled");
     try {
       isBatteryOptimizationDisabled =
-      await _flutterIgnorebatteryoptimizationPlugin
-          .isBatteryOptimizationDisabled() ==
-          true
-          ? "Disabled"
-          : "Enabled";
+          await _flutterIgnorebatteryoptimizationPlugin
+                      .isBatteryOptimizationDisabled() ==
+                  true
+              ? "Disabled"
+              : "Enabled";
       print("isBatteryOptimizationDisabled: $isBatteryOptimizationDisabled");
 
       // Disabled ==> means you have set no restrictions
       // Enabled ==> means you have not set no restrictions
     } on PlatformException {
       isBatteryOptimizationDisabled =
-      'Failed to show ignoreBatteryOptimization.';
+          'Failed to show ignoreBatteryOptimization.';
     }
     if (!mounted) return;
   }
@@ -370,14 +374,14 @@ class _TravelPageState extends State<TravelPage> {
                   ),
                   if (sourceController.text.isNotEmpty)
                     Text('Source: ${sourceController.text}'),
+                  // ElevatedButton(
+                  //   onPressed: () => _openMapAdjuster(transit1Controller),
+                  //   child: const Text('Select Transit'),
+                  // ),
+                  // if (transit1Controller.text.isNotEmpty)
+                  //   Text('Source: ${transit1Controller.text}'),
                   ElevatedButton(
-                    onPressed: () => _openMapAdjuster(transit1Controller),
-                    child: const Text('Select Transit'),
-                  ),
-                  if (transit1Controller.text.isNotEmpty)
-                    Text('Source: ${transit1Controller.text}'),
-                  ElevatedButton(
-                    onPressed: () => _openMapAdjuster(destinationController),
+                    onPressed: () => {_openMapAdjuster(destinationController)},
                     child: const Text('Select Destination'),
                   ),
                   if (destinationController.text.isNotEmpty)
@@ -436,11 +440,11 @@ class _TravelPageState extends State<TravelPage> {
                         print(response.body);
                       }
 
-                // Logic to create a new tour
-                setState(() {
-                  final data = jsonDecode(response.body);
-                  currentTour = (data['tour_data']);
-                });
+                      // Logic to create a new tour
+                      setState(() {
+                        final data = jsonDecode(response.body);
+                        currentTour = (data['tour_data']);
+                      });
 
                       locationService(context);
                     },
@@ -449,96 +453,96 @@ class _TravelPageState extends State<TravelPage> {
                 ],
               )
             : Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                'Current Tour: ${currentTour!['id']}',
-                style: const TextStyle(
-                    fontSize: 24, color: Color.fromARGB(255, 0, 0, 0)),
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: currentTour!['transactions'].length,
-                itemBuilder: (context, index) {
-                  final transaction = currentTour!['transactions'][index];
-                  return ListTile(
-                      title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Username: ${transaction['traveler_name']}',
-                            style: const TextStyle(
-                                fontSize: 16,
-                                color: Color.fromARGB(255, 0, 0, 0)),
-                          ),
-                          Text(
-                            'Price: ${transaction['amount']}',
-                            style: const TextStyle(
-                                fontSize: 16,
-                                color: Color.fromARGB(255, 0, 0, 0)),
-                          ),
-                        ],
-                      ),
-                      trailing: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            transaction['status'],
-                            style: TextStyle(
-                              color: transaction['status'] == 'Success' ||
-                                  transaction['status'] == 'Completed'
-                                  ? Colors.green
-                                  : transaction['status'] == 'Pending'
-                                  ? Colors.orange
-                                  : Colors.red,
-                              fontWeight: FontWeight.bold,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      'Current Tour: ${currentTour!['id']}',
+                      style: const TextStyle(
+                          fontSize: 24, color: Color.fromARGB(255, 0, 0, 0)),
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: currentTour!['transactions'].length,
+                      itemBuilder: (context, index) {
+                        final transaction = currentTour!['transactions'][index];
+                        return ListTile(
+                            title: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Username: ${transaction['traveler_name']}',
+                                  style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Color.fromARGB(255, 0, 0, 0)),
+                                ),
+                                Text(
+                                  'Price: ${transaction['amount']}',
+                                  style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Color.fromARGB(255, 0, 0, 0)),
+                                ),
+                              ],
                             ),
-                          ),
-                          if (transaction['status'] == 'Failed')
-                            Text(
-                              transaction['error'],
-                              style: const TextStyle(
-                                color: Colors.red,
-                                fontSize: 6,
-                              ),
-                            ),
-                        ],
-                      ));
-                },
+                            trailing: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  transaction['status'],
+                                  style: TextStyle(
+                                    color: transaction['status'] == 'Success' ||
+                                            transaction['status'] == 'Completed'
+                                        ? Colors.green
+                                        : transaction['status'] == 'Pending'
+                                            ? Colors.orange
+                                            : Colors.red,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                if (transaction['status'] == 'Failed')
+                                  Text(
+                                    transaction['error'],
+                                    style: const TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 6,
+                                    ),
+                                  ),
+                              ],
+                            ));
+                      },
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: _endTour,
+                    child: const Text('End Tour'),
+                  ),
+                ],
               ),
-            ),
-            ElevatedButton(
-              onPressed: _endTour,
-              child: const Text('End Tour'),
-            ),
-          ],
-        ),
       ),
       // Floating Action Button to add a new transaction
       floatingActionButton: currentTour == null
           ? null
           : FloatingActionButton(
-        onPressed: () {
-          // Open QR code scanner when clicked
-          showDialog(
-            context: context,
-            builder: (context) => Dialog(
-              child: SizedBox(
-                width: double.infinity,
-                height: 400,
-                child: QRView(
-                  key: _qrKey,
-                  onQRViewCreated: _onQRViewCreated,
-                ),
-              ),
+              onPressed: () {
+                // Open QR code scanner when clicked
+                showDialog(
+                  context: context,
+                  builder: (context) => Dialog(
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 400,
+                      child: QRView(
+                        key: _qrKey,
+                        onQRViewCreated: _onQRViewCreated,
+                      ),
+                    ),
+                  ),
+                );
+              },
+              child: const Icon(Icons.qr_code_scanner),
             ),
-          );
-        },
-        child: const Icon(Icons.qr_code_scanner),
-      ),
     );
   }
 }
