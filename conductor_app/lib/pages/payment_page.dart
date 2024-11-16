@@ -228,16 +228,20 @@ if (price <= 0) {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
+        child: 
+        Column(
   children: [
+    const SizedBox(height: 50),
      const Text(
               "Caution : Don't generate multiple QR codes.",
               style: TextStyle(color: Colors.red, fontStyle: FontStyle.italic),
               textAlign: TextAlign.left,
             ),
     // Main outer box
+    const SizedBox(height: 20),
     Container(
       margin: const EdgeInsets.all(10.0), // Adds margin around the main box
       padding: const EdgeInsets.all(12.0), // Adds padding inside the main box
@@ -296,7 +300,7 @@ if (price <= 0) {
         ],
       ),
     ),
-     const SizedBox(height: 20),
+     const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () {
                 clicked ? _showConfirmationDialog(context) : _generateQR();
