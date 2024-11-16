@@ -369,15 +369,15 @@ class _TravelPageState extends State<TravelPage> {
                   style: TextStyle(
                     fontSize: 14,
                     fontStyle: FontStyle.italic,
-                    color: Colors.red, // Alert or warning style
+                    color: Colors.purple, // Alert or warning style
                     fontWeight: FontWeight.bold,
-                    shadows: [
-                      Shadow(
-                        offset: Offset(1.0, 1.0), // Position of the shadow
-                        blurRadius: 4.0, // Blurriness of the shadow
-                        color: Color.fromARGB(128, 0, 0, 0), // Shadow color
-                      ),
-                    ],
+                    // shadows: [
+                    //   Shadow(
+                    //     offset: Offset(1.0, 1.0), // Position of the shadow
+                    //     blurRadius: 4.0, // Blurriness of the shadow
+                    //     color: Color.fromARGB(128, 0, 0, 0), // Shadow color
+                    //   ),
+                    // ],
                   ),
                 ),
               ),
@@ -402,26 +402,35 @@ class _TravelPageState extends State<TravelPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Adds spacing between buttons
                       children: [
                         ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: sourceController.text.isNotEmpty ? Colors.purple[200] : Colors.grey[100],
+                            // Green if source is selected, otherwise default Blue
+                          ),
                           onPressed: () => _openMapAdjuster(sourceController),
                           child: const Text('Source'),
                         ),
                         ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: destinationController.text.isNotEmpty ? Colors.green[100] : Colors.grey[100],
+                            // Green if destination is selected, otherwise default Blue
+                          ),
                           onPressed: () => _openMapAdjuster(destinationController),
                           child: const Text('Destination'),
                         ),
                       ],
                     ),
+
                     if (sourceController.text.isNotEmpty || destinationController.text.isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start, // Aligns text to the left
-                          children: [
-                            if (sourceController.text.isNotEmpty)
-                              Text('Source: ${sourceController.text}'),
-                            if (destinationController.text.isNotEmpty)
-                              Text('Destination: ${destinationController.text}'),
-                          ],
+                          // children: [
+                          //   if (sourceController.text.isNotEmpty)
+                          //     Text('Source: ${sourceController.text}'),
+                          //   if (destinationController.text.isNotEmpty)
+                          //     Text('Destination: ${destinationController.text}'),
+                          // ],
                         ),
                       ),
                   ],
