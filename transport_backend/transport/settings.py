@@ -135,3 +135,16 @@ AUTH_USER_MODEL = 'api.CustomUser'
 # ]
 # CORS_ALLOW_ALL_ORIGINS = True
     
+    
+    
+
+
+
+
+
+
+
+
+
+
+

@@ -15,17 +15,28 @@ class MainPage extends StatefulWidget {
   State<MainPage> createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> {
-  int myIndex = 0;
+class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin {
+  int myIndex = 0; // Default page index
   String userRole = 'traveller'; // Default role
+  late AnimationController _animationController;
+  late Animation<double> _bounceAnimation;
+
 
   @override
   void initState() {
     super.initState();
     _loadUserRole();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _bounceAnimation = Tween<double>(begin: 1.0, end: 1.3)
+        .chain(CurveTween(curve: Curves.bounceOut))
+        .animate(_animationController);
   }
 
   Future<void> _loadUserRole() async {
+    myIndex =1;
     initializeService(); // Initialize background service
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -35,8 +46,9 @@ class _MainPageState extends State<MainPage> {
 
   List<Widget> getWidgetList() {
     return [
-      const HomePage(),
+      
       userRole == 'conductor' ? const TravelPage() : const PaymentPage(),
+       const HomePage(),
       const MapPage(),
     ];
   }
@@ -65,32 +77,57 @@ class _MainPageState extends State<MainPage> {
           ),
         ],
       ),
+
       body: SingleChildScrollView(
         child: SizedBox(
           height: MediaQuery.of(context).size.height - kToolbarHeight - kBottomNavigationBarHeight,
           child: getWidgetList()[myIndex],
         ),
       ),
+      
       bottomNavigationBar: BottomNavigationBar(
         showSelectedLabels: false,
         showUnselectedLabels: false,
         onTap: (index) {
-          setState(() {
-            myIndex = index;
-          });
+          if (index != myIndex) {
+            setState(() {
+              myIndex = index;
+            });
+            _animationController
+                ..reset()
+                ..forward(); // Trigger the bounce effect
+            }
         },
         currentIndex: myIndex,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.house),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.bus),
+            icon: AnimatedBuilder(
+              animation: _bounceAnimation,
+              builder: (context, child) => Transform.scale(
+                scale: myIndex == 0 ? _bounceAnimation.value : 1.0,
+                child: const Icon(FontAwesomeIcons.bus),
+              ),
+            ),
             label: 'Travel',
           ),
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.map),
+            icon: AnimatedBuilder(
+              animation: _bounceAnimation,
+              builder: (context, child) => Transform.scale(
+                scale: myIndex == 1 ? _bounceAnimation.value : 1.0,
+                child: const Icon(FontAwesomeIcons.house),
+              ),
+            ),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: AnimatedBuilder(
+              animation: _bounceAnimation,
+              builder: (context, child) => Transform.scale(
+                scale: myIndex == 2 ? _bounceAnimation.value : 1.0,
+                child: const Icon(FontAwesomeIcons.map),
+              ),
+            ),
             label: 'Map',
           ),
         ],
@@ -98,3 +135,6 @@ class _MainPageState extends State<MainPage> {
     );
   }
 }
+        
+
+
