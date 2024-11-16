@@ -17,8 +17,11 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin {
-  int _currentIndex = 0; // Default page index
+  int myIndex = 0; // Default page index
   String userRole = 'traveller'; // Default role
+  late AnimationController _animationController;
+  late Animation<double> _bounceAnimation;
+
 
   @override
   void initState() {
@@ -27,7 +30,8 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   }
 
   Future<void> _loadUserRole() async {
-
+    myIndex =1;
+    initializeService(); // Initialize background service
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       userRole = prefs.getString('user_type') ?? 'traveller'; // Load user role
@@ -37,9 +41,9 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   List<Widget> getPages() {
     return [
       
-     const HomePage(), // Index 0: Home Page
-      userRole == 'conductor' ? const TravelPage() : const PaymentPage(), // Index 1: Travel/Payment based on role
-      const MapPage(), // Index 2: Map Page
+      userRole == 'conductor' ? const TravelPage() : const PaymentPage(),
+       const HomePage(),
+      const MapPage(),
     ];
   }
 
@@ -68,30 +72,63 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
         ],
       ),
 
-      body: getPages()[_currentIndex], // Render content based on the selected index
-      bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor: Colors.white,
-        color: const Color.fromARGB(255, 153, 109, 228),
-        items:[
-        Icon(FontAwesomeIcons.house,
-        color: Colors.white),
-
-        Icon(FontAwesomeIcons.bus,
-        color: Colors.white
+      body: SingleChildScrollView(
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height - kToolbarHeight - kBottomNavigationBarHeight,
+          child: getWidgetList()[myIndex],
         ),
-
-        Icon(FontAwesomeIcons.map,
-        color: Colors.white),
-
-      ],
-      index: _currentIndex,
+      ),
+      
+      bottomNavigationBar: BottomNavigationBar(
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
         onTap: (index) {
-          setState(() {
-            _currentIndex = index; // Update index to change the page
-          });
+          if (index != myIndex) {
+            setState(() {
+              myIndex = index;
+            });
+            _animationController
+                ..reset()
+                ..forward(); // Trigger the bounce effect
+            }
         },
-        ),
+        currentIndex: myIndex,
+        items: [
+          BottomNavigationBarItem(
+            icon: AnimatedBuilder(
+              animation: _bounceAnimation,
+              builder: (context, child) => Transform.scale(
+                scale: myIndex == 0 ? _bounceAnimation.value : 1.0,
+                child: const Icon(FontAwesomeIcons.bus),
+              ),
+            ),
+            label: 'Travel',
+          ),
+          BottomNavigationBarItem(
+            icon: AnimatedBuilder(
+              animation: _bounceAnimation,
+              builder: (context, child) => Transform.scale(
+                scale: myIndex == 1 ? _bounceAnimation.value : 1.0,
+                child: const Icon(FontAwesomeIcons.house),
+              ),
+            ),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: AnimatedBuilder(
+              animation: _bounceAnimation,
+              builder: (context, child) => Transform.scale(
+                scale: myIndex == 2 ? _bounceAnimation.value : 1.0,
+                child: const Icon(FontAwesomeIcons.map),
+              ),
+            ),
+            label: 'Map',
+          ),
+        ],
+      ),
     );
   }
 }
         
+
+

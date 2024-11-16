@@ -58,6 +58,8 @@ class Tour(models.Model):
     source_lng = models.DecimalField(max_digits=9, decimal_places=6, default=27)
     destination_lat = models.DecimalField(max_digits=9, decimal_places=6, default=27)
     destination_lng = models.DecimalField(max_digits=9, decimal_places=6, default=27)
+    
+    veh_num =  models.CharField(default = "ba 1 kha 1575", max_length=50)
 
     conductor = models.ForeignKey(
         CustomUser,
@@ -68,7 +70,7 @@ class Tour(models.Model):
     )
 
     def __str__(self):
-        return f"Tour is {'active' if self.is_active else 'inactive'} at {self.latitude}, {self.longitude} by {self.conductor}"
+        return f"Tour of {self.veh_num} is {'active' if self.is_active else 'inactive'} at {self.latitude}, {self.longitude} by {self.conductor}"
 
     
     # def __str__(self):

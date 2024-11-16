@@ -167,6 +167,7 @@ def activate_tour(request):
         source_lng = request.data.get("source_lng")
         destination_lat = request.data.get("destination_lat")
         destination_lng = request.data.get("destination_lng")
+        veh_num = request.data.get("veh_num")
         # if not source or not destination:
         #     return Response({"status": "failed", "message": "Source and destination are required"}, status=status.HTTP_400_BAD_REQUEST)
         
@@ -178,7 +179,8 @@ def activate_tour(request):
             source_lat=source_lat,
             source_lng=source_lng,
             destination_lat=destination_lat,
-            destination_lng=destination_lng
+            destination_lng=destination_lng,
+            veh_num = veh_num
         )
         
         transactions = Transaction.objects.filter(tour=tour)

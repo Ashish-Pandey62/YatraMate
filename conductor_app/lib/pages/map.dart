@@ -131,6 +131,7 @@ class _MapPageState extends State<MapPage>
       if (response.statusCode == 200) {
         setState(() {
           tours = jsonDecode(response.body)['data'];
+          print(tours);
         });
       } else {
         print('Failed to load tours');
@@ -182,9 +183,48 @@ class _MapPageState extends State<MapPage>
               ),
               children: [
                 TileLayer(
-                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  urlTemplate:
+                      'https://api.maptiler.com/maps/bright/{z}/{x}/{y}.png?key=ouwqfQklzvtVUJLrsxI6',
                   userAgentPackageName: 'com.example.app',
                 ),
+                Positioned(
+                  top: 20,
+                  right: 10,
+                  child: FloatingActionButton(
+                    onPressed: () {
+                      // _getCurrentLocation();
+                      mapController.rotate(0);
+                    },
+                    child: Icon(Icons.navigation),
+                  ),
+                ),
+                if (routePoints.isNotEmpty)
+                  Positioned(
+                    bottom: 40,
+                    left: 10,
+                    child: Container(
+                      padding: EdgeInsets.all(8.0),
+                      color: Colors.white,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Vehicle Number: ${tours![activeBusIndex!]['veh_num']}',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            'Tour ID : ${tours![activeBusIndex!]['id']}',
+                          ),
+                          Text(
+                            'Conductor: ${tours![activeBusIndex!]['conductor_name']}',
+                          ),
+                          // Text(
+                          //   'Heading: ${tours![activeBusIndex!]['heading']}',
+                          // ),
+                        ],
+                      ),
+                    ),
+                  ),
                 MarkerLayer(markers: [
                   for (int i = 0; i < (tours?.length ?? 0); i++)
                     Marker(
