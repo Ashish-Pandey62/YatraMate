@@ -163,24 +163,34 @@ def activate_tour(request):
                 "message": "User already has an active tour"
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        source_lat = request.data.get("source_lat")
-        source_lng = request.data.get("source_lng")
-        destination_lat = request.data.get("destination_lat")
-        destination_lng = request.data.get("destination_lng")
-        veh_num = request.data.get("veh_num")
-        # if not source or not destination:
-        #     return Response({"status": "failed", "message": "Source and destination are required"}, status=status.HTTP_400_BAD_REQUEST)
+        # source_lat = request.data.get("source_lat")
+        # source_lng = request.data.get("source_lng") 
+        # destination_lat = request.data.get("destination_lat")
+        # destination_lng = request.data.get("destination_lng")
+        # veh_num = request.data.get("veh_num")
         
+        # tour = Tour.objects.create(
+        #     is_active=True,
+        #     latitude=10.0,
+        #     longitude=10.0,
+        #     conductor=request.user,
+        #     source_lat=source_lat,
+        #     source_lng=source_lng,
+        #     destination_lat=destination_lat,
+        #     destination_lng=destination_lng,
+        #     veh_num = veh_num
+        # )
+
         tour = Tour.objects.create(
             is_active=True,
             latitude=10.0,
             longitude=10.0,
             conductor=request.user,
-            source_lat=source_lat,
-            source_lng=source_lng,
-            destination_lat=destination_lat,
-            destination_lng=destination_lng,
-            veh_num = veh_num
+            source_lat=0,
+            source_lng=0,
+            destination_lat=0,
+            destination_lng=0,
+            veh_num =" veh_num"
         )
         
         transactions = Transaction.objects.filter(tour=tour)
@@ -286,14 +296,15 @@ def end_tour(request):
 @permission_classes([IsAuthenticated])
 def update_tour_location(request):
     try:
+        print("Update Tour Location")
         if request.user.user_type != 'conductor':
             return Response({"status": "failed", "message": "Only conductors can update tour location"}, status=status.HTTP_403_FORBIDDEN)
 
         active_tour = Tour.objects.filter(conductor=request.user, is_active=True).first()
+        print(activate_tour)
         
         if not active_tour:
             return Response({"status": "failed", "message": "No active tour found for this conductor"}, status=status.HTTP_404_NOT_FOUND)
-        print(activate_tour)
         latitude = request.data.get('latitude')
         longitude = request.data.get('longitude')
         heading = request.data.get('heading')

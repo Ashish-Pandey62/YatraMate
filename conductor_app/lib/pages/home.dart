@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:conductor_app/utils/location.dart';
 import 'package:conductor_app/utils/utils.dart';
+import 'package:geolocator/geolocator.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -48,7 +49,6 @@ class _HomePageState extends State<HomePage> {
     await prefs.setString('username', ''); // Clear username
     await deletePrivateKey(); // Delete private key
     stopBackgroundService(); // Stop background service
-
     Navigator.of(context).pushReplacementNamed('/login');
   }
 

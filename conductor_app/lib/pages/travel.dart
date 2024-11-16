@@ -15,6 +15,7 @@ import 'package:flutter_ignorebatteryoptimization/flutter_ignorebatteryoptimizat
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:conductor_app/utils/map_adjust.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 
 // Global variable to store current tour info
 Map<String, dynamic>? currentTour; // Null means no tour is active
@@ -148,6 +149,7 @@ class _TravelPageState extends State<TravelPage> {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       if (data['is_active'] == true) {
+        startBackgroundService();
         setState(() {
           currentTour = data['tour_data'];
         });
@@ -156,7 +158,6 @@ class _TravelPageState extends State<TravelPage> {
           currentTour = null;
         });
       }
-      startBackgroundService();
     } else {
       print('Error fetching active tour: ${response.body}');
     }
@@ -175,7 +176,6 @@ class _TravelPageState extends State<TravelPage> {
         'tour_id': currentTour!['id'],
       }),
     );
-
     if (response.statusCode == 200) {
       setState(() {
         currentTour = null;
@@ -185,6 +185,8 @@ class _TravelPageState extends State<TravelPage> {
     } else {
       print('Error ending tour: ${response.body}');
     }
+
+    verifyServicesStopped();
   }
 
   @override
@@ -285,7 +287,7 @@ class _TravelPageState extends State<TravelPage> {
         }
       }
       // Start the background service
-      startBackgroundService();
+      // startBackgroundService();
     }
   }
 
@@ -477,18 +479,8 @@ class _TravelPageState extends State<TravelPage> {
                   255, 153, 109, 228), // Increases text size
               foregroundColor: const Color.fromARGB(
                   255, 235, 230, 230), // Set text color to black
-              foregroundColor: const Color.fromARGB(
-                  255, 235, 230, 230), // Set text color to black
             ),
             onPressed: _createTour,
-            child: const Text(
-              'Start',
-              style: TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.bold, // Bold text
-                color: Colors.white, // Text color (optional)
-              ),
-            ),
             child: const Text(
               'Start',
               style: TextStyle(
