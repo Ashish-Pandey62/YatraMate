@@ -101,7 +101,7 @@ class _SignupPageState extends State<SignupPage> {
 Widget build(BuildContext context) {
   return Scaffold(
     appBar: AppBar(
-      backgroundColor: Colors.white, // Set AppBar background color to white
+      backgroundColor: Color.fromARGB(255, 255, 225, 255) , // Set AppBar background color to white
       iconTheme: const IconThemeData(color: Colors.black),
       titleTextStyle: const TextStyle(color: Colors.black, fontSize: 20),
     ),
