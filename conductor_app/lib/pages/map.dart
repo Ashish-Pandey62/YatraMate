@@ -223,6 +223,22 @@ class _MapPageState extends State<MapPage>
                       ),
                     ],
                   ),
+                MarkerLayer(markers: [
+                  Marker(
+                    point: routePoints.first,
+                    child: Icon(
+                      Icons.location_on,
+                      color: Colors.red,
+                    ),
+                  ),
+                  Marker(
+                    point: routePoints.last,
+                    child: Icon(
+                      Icons.location_on,
+                      color: Colors.green,
+                    ),
+                  ),
+                ]),
               ],
             )
           else
