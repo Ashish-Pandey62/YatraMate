@@ -14,6 +14,8 @@ urlpatterns = [
     path('all-active-tour/', views.get_all_active_tours, name='active_tour'),
     path('tour/<int:tour_id>/source-destination-coords/', views.get_tour_coordinates, name='tour-source-destination_coords'),
     path('tour/<int:tour_id>/set-coordinates/', views.set_tour_coordinates, name='set_tour_coordinates'),
+    path('api/traffic-flow/', views.traffic_flow, name='traffic_flow'),
+
 ]
 
 
