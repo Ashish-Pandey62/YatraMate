@@ -16,7 +16,8 @@ class MainPage extends StatefulWidget {
   State<MainPage> createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin {
+class _MainPageState extends State<MainPage>
+    with SingleTickerProviderStateMixin {
   int _currentIndex = 0; // Default page index
   String userRole = 'traveller'; // Default role
 
@@ -35,14 +36,13 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
 
   List<Widget> getPages() {
     return [
-      
-     const HomePage(), // Index 0: Home Page
-      userRole == 'conductor' ? const TravelPage() : const PaymentPage(), // Index 1: Travel/Payment based on role
+      const HomePage(), // Index 0: Home Page
+      userRole == 'conductor'
+          ? const TravelPage()
+          : const PaymentPage(), // Index 1: Travel/Payment based on role
       const MapPage(), // Index 2: Map Page
     ];
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -58,30 +58,23 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
       //   ],
       // ),
 
-      body: getPages()[_currentIndex], // Render content based on the selected index
+      body: getPages()[
+          _currentIndex], // Render content based on the selected index
       bottomNavigationBar: CurvedNavigationBar(
         backgroundColor: Colors.transparent,
-        color: const Color.fromARGB(255, 153, 109, 228),
-        items:[
-        Icon(FontAwesomeIcons.house,
-        color: Colors.white),
-
-        Icon(FontAwesomeIcons.bus,
-        color: Colors.white
-        ),
-
-        Icon(FontAwesomeIcons.map,
-        color: Colors.white),
-
-      ],
-      index: _currentIndex,
+        color: const Color.fromARGB(255, 153, 112, 225),
+        items: [
+          Icon(FontAwesomeIcons.house, color: Colors.white),
+          Icon(FontAwesomeIcons.bus, color: Colors.white),
+          Icon(FontAwesomeIcons.map, color: Colors.white),
+        ],
+        index: _currentIndex,
         onTap: (index) {
           setState(() {
             _currentIndex = index; // Update index to change the page
           });
         },
-        ),
+      ),
     );
   }
 }
-        

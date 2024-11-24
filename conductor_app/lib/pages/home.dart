@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:conductor_app/utils/location.dart';
 import 'package:conductor_app/utils/utils.dart';
+import 'package:geolocator/geolocator.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -24,6 +25,7 @@ class _HomePageState extends State<HomePage> {
   List<Map<String, dynamic>> transactionHistory = [];
   String? user_type = 'traveler';
   final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -38,6 +40,7 @@ class _HomePageState extends State<HomePage> {
     _fetchData();
     _checkInternetConnection();
   }
+
   // Function to handle logout and navigate to login page
   Future<void> _logout() async {
     final prefs = await SharedPreferences.getInstance();
@@ -129,10 +132,22 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Yatra Mate'),
+        title: const Text(
+          'Yatra Mate',
+          style: TextStyle(
+            fontSize: 30, // Adjust font size as needed
+            fontWeight: FontWeight.bold, // Optional: font styling
+            color: Colors.black, // Optional: adjust text color
+          ),
+        ),
+        backgroundColor: Color.fromARGB(255, 255, 225, 255),
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout),
+            icon: const Icon(
+              Icons.logout,
+              color: Colors.black, // Set the icon color to white
+              size: 25, // Increase the icon size (adjust as needed)
+            ),
             onPressed: _logout,
             tooltip: 'Logout',
           ),
@@ -140,7 +155,10 @@ class _HomePageState extends State<HomePage> {
       ),
       body: !connection
           ? const Center(
-              child: Text("No Internet Connection"),
+              child: Text(
+                "No Internet Connection",
+                style: TextStyle(color: Colors.red, fontSize: 18),
+              ),
             )
           : Padding(
               padding: const EdgeInsets.all(16.0),
@@ -148,15 +166,16 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const SizedBox(height: 20),
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 5,
-                            blurRadius: 7,
+                            color: Colors.grey.withOpacity(0.3),
+                            spreadRadius: 3,
+                            blurRadius: 3,
                             offset: const Offset(0, 3),
                           ),
                         ],
@@ -228,7 +247,8 @@ class _HomePageState extends State<HomePage> {
                               ElevatedButton(
                                 onPressed: () {},
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.green,
+                                  backgroundColor:
+                                      const Color.fromRGBO(76, 175, 80, 1),
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 24, vertical: 12),
                                   textStyle: const TextStyle(

@@ -10,6 +10,15 @@ import 'package:flutter/services.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
+void verifyServicesStopped() async {
+  final service = FlutterBackgroundService();
+  bool isRunning = await service.isRunning();
+  print("Is Flutter background service running? $isRunning");
+
+  bool isGeolocatorRunning = await Geolocator.isLocationServiceEnabled();
+  print("Is Geolocator location service enabled? $isGeolocatorRunning");
+}
+
 Future<Map<String, dynamic>> fetchLocationData(String query) async {
   final apiKey =
       '5b3ce3597851110001cf6248966817b9279641689b1420ce56329a55'; // Replace with your API key
@@ -127,10 +136,10 @@ Future<void> initializeService() async {
       onBackground: onIosBackground,
     ),
     androidConfiguration: AndroidConfiguration(
-      autoStart: true,
+      autoStart: false,
       onStart: onStart,
-      isForegroundMode: false,
-      autoStartOnBoot: true,
+      isForegroundMode: true,
+      autoStartOnBoot: false,
     ),
   );
 }
@@ -143,24 +152,39 @@ Future<bool> onIosBackground(ServiceInstance service) async {
   return true;
 }
 
-void startBackgroundService() {
+void startBackgroundService() async {
   final service = FlutterBackgroundService();
-  service.startService();
+
+  bool isRunning = await service.isRunning(); // Check if service is running
+  if (!isRunning) {
+    await service.startService();
+    print('Service started.');
+  } else {
+    print('Service is already runninggggggggg.');
+  }
 }
 
 void stopBackgroundService() {
+  print("stop bg service called");
   final service = FlutterBackgroundService();
   service.invoke("stop");
 }
 
 @pragma('vm:entry-point')
 void onStart(ServiceInstance service) async {
+  service.on('stop').listen((event) {
+    print("Background service has been stopped.");
+    service.stopSelf(); // Properly stops the background service
+  });
+
   String baseUrl = "http://192.168.75.99:8000";
   String updateLocationUrl = '$baseUrl/api/update-location/';
   final prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('auth_token');
+  print("flutter service is running");
 
   Timer.periodic(const Duration(seconds: 3), (timer) async {
+    print("flutter service is running");
     try {
       Position position = await Geolocator.getCurrentPosition();
       final response = await http.post(
