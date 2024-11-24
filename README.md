@@ -8,7 +8,7 @@ QR-Based Offline Cashless System for Public Transport
 YatraMate is an innovative, QR-based offline cashless system designed to enhance public transportation experiences by streamlining payments, reducing cash dependency, and providing real-time navigation using OpenStreetMap (OSM) data. Built using Flutter for cross-platform mobile applications and Django for the backend, this solution offers seamless integration, security, and scalability.
 
 ## Demo Video:
-![Demo Video](conductor_app\assets\final.mp4)
+![Demo Video](conductor_app/assets/final.mp4)
 
 ## Table of Contents
 1.  Features
