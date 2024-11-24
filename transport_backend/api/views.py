@@ -412,52 +412,90 @@ import json
 
 TOMTOM_API_KEY = 'kggGzqGfriHEcd9tiXaLL97KG7fi8niP'
 
-@csrf_exempt
+
+
+
+    
+
+@csrf_exempt  # Use if CSRF protection is not configured for POST requests
 def traffic_flow(request):
     if request.method == 'POST':
         try:
+            # Check if there's an active tour
             active_tour = Tour.objects.filter(is_active=True).first()
             if not active_tour:
-                return JsonResponse({"status": "error", "message": "No active tour found."}, status=404)
+                return JsonResponse(
+                    {"status": "error", "message": "No active tour found."},
+                    status=404
+                )
 
-            source = {
-                "latitude": float(active_tour.source_lat),
-                "longitude": float(active_tour.source_lng),
-            }
-            destination = {
-                "latitude": float(active_tour.destination_lat),
-                "longitude": float(active_tour.destination_lng),
-            }
+            # Prepare source and destination
+            try:
+                source = {
+                    "latitude": float(active_tour.source_lat),
+                    "longitude": float(active_tour.source_lng),
+                }
+                destination = {
+                    "latitude": float(active_tour.destination_lat),
+                    "longitude": float(active_tour.destination_lng),
+                }
+            except ValueError as ve:
+                return JsonResponse(
+                    {"status": "error", "message": "Invalid coordinates in tour data."},
+                    status=400
+                )
 
-            tomtom_url = f"https://api.tomtom.com/traffic/services/4/flowSegmentData/absolute/10/json"
-            params = {
-                "key": TOMTOM_API_KEY,
-                "point": f"{source['latitude']},{source['longitude']}"
-            }
-            response = requests.get(tomtom_url, params=params)
+            # TomTom API request
+            # tomtom_url = "https://api.tomtom.com/traffic/services/4/flowSegmentData/absolute/10/json"
+            # params = {
+            #     "key": TOMTOM_API_KEY,
+            #     "point": f"{source['latitude']},{source['longitude']}"
+            # }
+            # response = requests.get(tomtom_url, params=params)
+            tomtom_url = "https://api.tomtom.com/traffic/services/4/flowSegmentData/absolute/10/json?key=kggGzqGfriHEcd9tiXaLL97KG7fi8niP&point=52.41072,4.84239"
+
+            response = requests.get(tomtom_url)
+            
             if response.status_code != 200:
-                return JsonResponse({"status": "error", "message": "Failed to fetch traffic data."}, status=500)
+                return JsonResponse(
+                    {"status": "error", "message": f"Failed to fetch traffic data: {response.status_code}"},
+                    status=500
+                )
 
-            traffic_data = response.json()
+            # Parse traffic data
+            try:
+                traffic_data = response.json()
+            except ValueError:
+                print(f"Failed to parse response. Status code: {response.status_code}, Raw response: {response.text}")
+                return JsonResponse(
+                    {"status": "error", "message": "Failed to parse traffic data response.", "details": response.text},
+                    status=500
+                )
 
+
+            # Analyze traffic flow segments
             segments = []
             for segment in traffic_data.get("flowSegments", []):
-                current_speed = segment.get("currentSpeed", 0)
-                free_flow_speed = segment.get("freeFlowSpeed", 1)  
-                congestion_index = current_speed / free_flow_speed
+                try:
+                    current_speed = segment.get("currentSpeed", 0)
+                    free_flow_speed = segment.get("freeFlowSpeed", 1)  
+                    congestion_index = current_speed / free_flow_speed if free_flow_speed else 0
 
-                if congestion_index < 0.7:
-                    congestion = "high"
-                elif congestion_index < 0.9:
-                    congestion = "moderate"
-                else:
-                    congestion = "low"
+                    if congestion_index < 0.7:
+                        congestion = "high"
+                    elif congestion_index < 0.9:
+                        congestion = "moderate"
+                    else:
+                        congestion = "low"
 
-                segments.append({
-                    "polyline": segment.get("coordinates"),  
-                    "congestion": congestion
-                })
+                    segments.append({
+                        "polyline": segment.get("coordinates"),  
+                        "congestion": congestion
+                    })
+                except Exception as segment_error:
+                    print(f"Error processing segment: {segment_error}")  # Log segment processing errors
 
+            # Construct response
             return JsonResponse({
                 "status": "success",
                 "tour": {
@@ -469,7 +507,19 @@ def traffic_flow(request):
                 "traffic": segments
             })
 
+        except requests.RequestException as re:
+            return JsonResponse(
+                {"status": "error", "message": f"Traffic API request error: {str(re)}"},
+                status=500
+            )
         except Exception as e:
-            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+            return JsonResponse(
+                {"status": "error", "message": f"An unexpected error occurred: {str(e)}"},
+                status=500
+            )
 
-    return JsonResponse({"status": "error", "message": "Invalid request method."}, status=405)
+    # Handle invalid request method
+    return JsonResponse(
+        {"status": "error", "message": "Invalid request method. Only POST is allowed."},
+        status=405
+    )
